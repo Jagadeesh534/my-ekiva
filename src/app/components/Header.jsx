@@ -1,11 +1,20 @@
 import React from "react";
-import { Link } from "react-router-dom";
-import { Navbar, Nav, Container } from "react-bootstrap";
-import { useSelector } from "react-redux";
-
+import { Link, useNavigate } from "react-router-dom";
+import { FaSignOutAlt } from "react-icons/fa";
+import { Navbar, Nav, Container, Button } from "react-bootstrap";
+import { useSelector, useDispatch } from "react-redux";
+import { clearLoginType } from "../features/authSlice";
 const Header = () => {
     const menus = useSelector((state) => state.auth.menus);
-
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+  
+    // Handle Logout
+    const handleLogout = () => {
+      dispatch(clearLoginType()); // Clear login data from Redux
+      navigate("/"); // Redirect to login page
+    };
+  
 
   return (
     <Navbar className="header" variant="dark" expand="lg" fixed="top">
@@ -31,6 +40,14 @@ const Header = () => {
                 {menu.name}
               </Nav.Link>
             ))}
+            {/* Logout Button */}
+            <Button
+              variant="outline-light"
+              className="logout-btn"
+              onClick={handleLogout}
+            >
+              <FaSignOutAlt className="me-1" /> Logout
+            </Button>
           </Nav>
         </Navbar.Collapse>
       </Container>
