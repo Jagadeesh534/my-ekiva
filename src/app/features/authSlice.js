@@ -23,11 +23,7 @@ const authSlice = createSlice({
           break;
         case "school":
           state.menus = [
-            { name: "Dashboard", path: "/dashboard" },
-            { name: "Manage Students", path: "/manage-students" },
-            { name: "Teachers", path: "/teachers" },
-            { name: "Reports", path: "/reports" },
-            { name: "Profile", path: "/profile" },
+            
           ];
           break;
         case "teacher":

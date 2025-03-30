@@ -199,6 +199,760 @@ body {
   z-index: 1000;
 }
 
+/* Main Dashboard Container */
+.dashboard-container {
+  padding: 40px 20px;
+  background-color: #f4f6f9; /* Light Gray Background */
+}
+
+/* Title Styles */
+.dashboard-title {
+  font-size: 28px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+/* Card Grid Layout */
+.dashboard-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+/* Card Styles */
+.dashboard-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 16px;
+  background-color: #fff; /* Light Card Background */
+  transition: transform 0.2s ease-in-out;
+  cursor: pointer;
+  height: 200px; /* Fixed Height */
+  width: 250px; /* Fixed Width for Desktop */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  position: relative;
+  color: #4a90e2; /* Default Blue Color */
+}
+
+/* Unique Background for Each Card */
+.dashboard-card:nth-child(1) {
+  background-color: #e8f4fd;
+}
+
+.dashboard-card:nth-child(2) {
+  background-color: #fef6e4;
+}
+
+.dashboard-card:nth-child(3) {
+  background-color: #eaf8e6;
+}
+
+.dashboard-card:nth-child(4) {
+  background-color: #f9e6e9;
+}
+
+/* Hover Effect */
+.dashboard-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon Styles */
+.icon-style {
+  font-size: 40px;
+  color: #4a90e2; /* Blue Icon */
+  margin-bottom: 8px;
+}
+
+/* Card Title */
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #4a90e2;
+}
+
+/* Metric Display */
+.card-metric {
+  font-size: 22px;
+  font-weight: bold;
+  margin-top: 5px;
+  color: #333;
+}
+
+/* Card Footer */
+.card-footer-text {
+  font-size: 12px;
+  position: absolute;
+  bottom: 10px;
+  text-transform: uppercase;
+  color: #7b7b7b;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .dashboard-card {
+    width: 200px; /* Smaller Width for Medium Devices */
+    height: 180px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 20px 10px;
+  }
+
+  .dashboard-title {
+    font-size: 24px;
+  }
+
+  .dashboard-card {
+    width: 150px;
+    height: 150px;
+  }
+
+  .icon-style {
+    font-size: 32px;
+  }
+
+  .card-title {
+    font-size: 16px;
+  }
+
+  .card-metric {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-card {
+    width: 140px;
+    height: 140px;
+  }
+
+  .icon-style {
+    font-size: 28px;
+  }
+
+  .card-title {
+    font-size: 14px;
+  }
+
+  .card-metric {
+    font-size: 16px;
+  }
+}
+
+
+/* Main Container */
+.grid-container {
+  padding: 20px;
+  background-color: #f4f6f9;
+}
+
+/* Search Bar Styles */
+.search-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  font-size: 16px;
+}
+
+/* Card Grid */
+.grid-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+/* Student Card */
+.student-card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: transform 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.student-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Avatar */
+.student-avatar {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+}
+
+/* Name and Class */
+.student-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #4a90e2;
+}
+
+.student-class {
+  font-size: 14px;
+  color: #7b7b7b;
+}
+
+.student-status {
+  font-size: 12px;
+  margin-top: 8px;
+  color: #28a745;
+}
+
+/* Pagination Styles */
+.pagination-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.pagination-btn {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+}
+
+.pagination-btn:hover {
+  background-color: #f0f0f0;
+}
+
+.pagination-btn.active {
+  background-color: #4a90e2;
+  color: #fff;
+  border-color: #4a90e2;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .grid-row {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .grid-row {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+
+  .search-input {
+    width: 100%;
+  }
+}
+.header {
+  background-color: #4a90e2; /* Custom background color */
+  padding: 10px 0;
+}
+
+/* Logo Text */
+.logo-text {
+  font-size: 22px;
+}
+
+/* Navigation Links */
+.nav-link-custom {
+  color: #fff !important;
+  margin-right: 15px;
+  font-size: 16px;
+  transition: color 0.3s ease-in-out;
+}
+
+.nav-link-custom:hover {
+  color: #cce4ff !important;
+}
+
+/* Profile Dropdown Styles */
+.profile-dropdown .dropdown-toggle {
+  color: #fff !important;
+  font-size: 16px;
+}
+
+.profile-dropdown .dropdown-menu {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+}
+
+.profile-dropdown .dropdown-item {
+  font-size: 14px;
+}
+
+/* Mobile - Move Profile to Top in Menu */
+@media (max-width: 991px) {
+  .navbar-nav {
+    margin-top: 10px;
+  }
+
+  .profile-dropdown {
+    margin-top: 10px;
+  }
+
+  .nav-link-custom {
+    font-size: 14px;
+    margin: 5px 0;
+  }
+
+  .logo-text {
+    font-size: 18px;
+  }
+
+  .navbar-toggler {
+    border-color: #fff;
+  }
+}
+
+/* Logout Button */
+.logout-btn {
+  margin-left: 15px;
+  border-color: #fff !important;
+  color: #fff !important;
+}
+
+.logout-btn:hover {
+  background-color: #fff !important;
+  color: #4a90e2 !important;
+}
+/* Form Card Styles */
+.card {
+  border-radius: 12px;
+}
+
+.card h3 {
+  color: #4a90e2;
+}
+
+/* Form Input Focus */
+.form-control:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 8px rgba(74, 144, 226, 0.5);
+}
+
+/* Submit Button Hover */
+.btn-primary,
+.btn-success {
+  background: linear-gradient(135deg, #4a90e2, #4f94d4);
+  border: none;
+}
+
+.btn-primary:hover,
+.btn-success:hover {
+  background: linear-gradient(135deg, #3b7bbf, #4186c7);
+}
+/* Card Actions */
+.card-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-outline-primary,
+.btn-outline-secondary {
+  padding: 5px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.btn-outline-primary:hover {
+  background-color: #4a90e2;
+  color: #fff;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #6c757d;
+  color: #fff;
+}
+
+.w-45 {
+  width: 48%;
+}
+
+.text-muted {
+  font-size: 14px;
+}
+
+/* Avatar Container */
+.avatar-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Avatar Image */
+.avatar-image {
+  border: 3px solid #4a90e2;
+  transition: transform 0.2s ease-in-out;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+}
+
+.avatar-image:hover {
+  transform: scale(1.05);
+}
+
+/* Edit Icon Inside Avatar */
+.edit-icon {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  background-color: #4a90e2;
+  color: white;
+  border-radius: 50%;
+  padding: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s;
+  border: 2px solid white;
+}
+
+.edit-icon:hover {
+  background-color: #357ae8;
+}
+
+/* Width Control */
+.w-45 {
+  width: 48%;
+}
+
+/* Grid Container */
+.grid-container {
+  padding: 20px;
+  background-color: #f8f9fa;
+}
+
+/* Search Container */
+.search-container {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+/* Grid Row */
+.grid-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* Student Card */
+.student-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.student-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Student Avatar */
+.student-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 2px solid #4a90e2;
+  margin-bottom: 10px;
+}
+
+/* Student Name */
+.student-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Class, Status, and Roll Number */
+.student-class,
+.student-status,
+.student-roll {
+  font-size: 14px;
+  color: #555;
+  margin: 5px 0;
+}
+
+/* Roll Number Styling */
+.student-roll {
+  font-size: 14px;
+  font-weight: 600;
+  color: #4a90e2;
+  background-color: #f0f7ff;
+  border-radius: 5px;
+  padding: 5px 10px;
+  display: inline-block;
+}
+
+/* Card Actions */
+.card-actions {
+  margin-top: 10px;
+}
+
+/* Buttons */
+.btn {
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+/* Pagination */
+.pagination-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.pagination-btn {
+  padding: 8px 12px;
+  margin: 0 5px;
+  border: 1px solid #ddd;
+  background-color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.pagination-btn.active {
+  background-color: #4a90e2;
+  color: #fff;
+}
+/* Avatar Styles */
+.avatar-container {
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
+.avatar-image {
+  width: 120px;
+  height: 120px;
+  border: 4px solid #4a90e2;
+  object-fit: cover;
+  transition: transform 0.2s ease-in-out;
+}
+
+.avatar-image:hover {
+  transform: scale(1.05);
+}
+
+/* Student Info */
+.student-name {
+  font-size: 22px;
+  font-weight: bold;
+  color: #4a90e2;
+}
+
+.student-class,
+.student-roll {
+  font-size: 16px;
+  color: #555;
+}
+
+.student-status {
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+/* Back Button */
+.btn-outline-secondary {
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #4a90e2;
+  color: #fff;
+}
+/* Custom Logo Text */
+.logo-text {
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+}
+
+/* Navbar Links */
+.nav-link-custom {
+  font-size: 1rem;
+  padding: 8px 12px;
+  color: #fff;
+}
+
+.nav-link-custom:hover {
+  color: #17a2b8;
+}
+
+/* Profile Dropdown Styling */
+.profile-dropdown .dropdown-item {
+  padding: 10px 15px;
+  font-size: 0.95rem;
+}
+
+.profile-dropdown .dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* Profile Avatar */
+.profile-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+/* Profile Details */
+.profile-details {
+  text-align: center;
+  padding: 10px 0;
+}
+/* Mobile Specific Styles */
+@media (max-width: 991px) {
+  /* Adjust Profile Dropdown */
+  #profile-dropdown-mobile .dropdown-menu {
+    width: 100%;
+    text-align: center;
+    padding: 10px 0;
+  }
+
+  #profile-dropdown-mobile .dropdown-item {
+    font-size: 14px;
+    padding: 10px 15px;
+  }
+
+  /* Avatar and Profile Name */
+  .profile-avatar {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 10px;
+  }
+
+  .profile-details p {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #333;
+  }
+
+  /* Adjust Navbar Collapse */
+  .navbar-toggler {
+    border-color: #fff;
+  }
+
+  .navbar-toggler:focus {
+    box-shadow: none;
+  }
+
+  /* Align Menu Links Properly */
+  .navbar-nav {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .nav-link-custom {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  /* Profile Menu in Mobile */
+  .profile-dropdown .dropdown-item {
+    padding: 12px 15px;
+  }
+
+  .logout-btn {
+    margin-top: 5px;
+  }
+}
+.profile-dropdown .dropdown-item {
+  font-size: 14px;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.profile-dropdown .dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+/* Align Icons with Text */
+.profile-dropdown .dropdown-item svg {
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* For Desktop */
+@media (min-width: 992px) {
+  #profile-dropdown-desktop .dropdown-menu {
+    min-width: 180px;
+  }
+}
+
+/* For Mobile */
+@media (max-width: 991px) {
+  #profile-dropdown .dropdown-menu {
+    width: 100%;
+    text-align: center;
+  }
+
+  #profile-dropdown .dropdown-item {
+    padding: 12px 15px;
+    font-size: 14px;
+  }
+}
+
+/* Main Content Area */
+.main-content {
+  padding-top: 70px; /* Space for fixed header */
+  padding-bottom: 60px; /* Space for footer */
+  margin: 1rem;
+}
+
+/* Breadcrumb Section */
+.breadcrumb-section {
+  background-color: #f8f9fa;
+  padding: 15px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+/* Content Wrapper */
+.content-wrapper {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+
+
 .main-content {
   padding-top: 80px; /* Space for header */
   flex-grow: 1;
