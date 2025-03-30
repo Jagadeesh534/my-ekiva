@@ -73,34 +73,56 @@ body {
   margin-bottom: 20px;
 }
 
-/* Option Card Styles */
-.option-card {
+/* Login Card Styles */
+.card {
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease-in-out;
 }
 
-.option-card:hover {
+.card:hover {
   transform: translateY(-5px);
 }
 
-/* Button Styles */
-.option-button {
-  background-color: #fff;
+/* Form Input Styles */
+.form-control {
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 16px;
   border: 1px solid #ddd;
+}
+
+.form-control:focus {
+  border-color: linear-gradient(135deg, #4a90e2, #4f94d4);
+  box-shadow: 0 0 8px rgba(74, 144, 226, 0.2);
+}
+
+/* Forgot Password Link */
+.forgot-password {
+  font-size: 14px;
+  text-decoration: none;
+  color: linear-gradient(135deg, #4a90e2, #4f94d4);
+  transition: color 0.2s;
+}
+
+.forgot-password:hover {
+  color: linear-gradient(135deg, #4a90e2, #4f94d4);
+}
+
+/* Login Button */
+.btn-primary {
+  background: linear-gradient(135deg, #4a90e2, #4f94d4) !important;
+  border: none;
   border-radius: 8px;
   padding: 12px;
   font-size: 18px;
-  color: #333;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background-color 0.2s;
+  transition: background-color 0.3s ease-in-out;
 }
 
-.option-button:hover {
-  background-color: #f8f9fa;
+.btn-primary:hover {
+  background: linear-gradient(135deg, #4a90e2, #4f94d4) !important;
+  border: none;
 }
 
 /* Responsive Design */
@@ -121,7 +143,12 @@ body {
     font-size: 16px;
   }
 
-  .option-button {
+  .form-control {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .btn-primary {
     font-size: 16px;
     padding: 10px;
   }
@@ -140,8 +167,13 @@ body {
     font-size: 12px;
   }
 
-  .option-button {
+  .form-control {
     font-size: 14px;
+  }
+
+  .btn-primary {
+    font-size: 14px;
+    padding: 10px;
   }
 
   .wave svg {

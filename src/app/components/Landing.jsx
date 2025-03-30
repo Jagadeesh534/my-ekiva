@@ -2,14 +2,23 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Container, Button, Row, Col, Card } from "react-bootstrap";
 import { FaUserGraduate, FaChalkboardTeacher, FaSchool } from "react-icons/fa";
-
-const Login = () => {
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setLoginType } from "../features/authSlice";
+const Landing = () => {
   const options = [
-    { icon: <FaUserGraduate />, label: "Student" },
-    { icon: <FaChalkboardTeacher />, label: "Teacher" },
-    { icon: <FaSchool />, label: "School" },
+    { icon: <FaUserGraduate />, label: "Student" , value:'student'},
+    { icon: <FaChalkboardTeacher />, label: "Teacher" , value:'teacher'},
+    { icon: <FaSchool />, label: "School" , value:'school'},
   ];
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
+  const hanldeOnclick=(user)=>{
+    dispatch(setLoginType(user))
+    navigate('/login')
+
+  }
   return (
     <div className="app-container">
       {/* Header Section with Wave */}
@@ -43,7 +52,7 @@ const Login = () => {
             <Col key={index} md={8} sm={12} className="mb-3">
               <Card className="option-card">
                 <Card.Body>
-                  <Button variant="light" className="option-button w-100">
+                  <Button variant="light" onClick={()=>hanldeOnclick(option.value)} className="option-button w-100">
                     {option.icon} <span className="ms-2">{option.label}</span>
                   </Button>
                 </Card.Body>
@@ -56,4 +65,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Landing;
