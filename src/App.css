@@ -1,0 +1,150 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700;800&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Nunito", sans-serif;
+  background-color: #f4f4f4;
+}
+
+/* Main Container */
+.app-container {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #e9ecef;
+}
+
+/* Wave Header Styles */
+.wave-header {
+  position: relative;
+  background: linear-gradient(135deg, #4a90e2, #4f94d4);
+  padding: 50px 20px;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Header Content */
+.header-content {
+  position: relative;
+  z-index: 1;
+  margin-bottom: -10px;
+}
+
+.logo {
+  width: 80px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.title {
+  font-size: 28px;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.subtitle {
+  font-size: 16px;
+  color: #f0f0f0;
+}
+
+/* Wave Effect */
+.wave svg {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 120px;
+  display: block;
+}
+
+/* Main Content */
+.content {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.welcome-text {
+  font-size: 18px;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Option Card Styles */
+.option-card {
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.option-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Button Styles */
+.option-button {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 18px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s;
+}
+
+.option-button:hover {
+  background-color: #f8f9fa;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .wave-header {
+    padding: 50px 10px;
+  }
+
+  .title {
+    font-size: 24px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+  }
+
+  .welcome-text {
+    font-size: 16px;
+  }
+
+  .option-button {
+    font-size: 16px;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 500px) {
+  .logo {
+    width: 60px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .subtitle {
+    font-size: 12px;
+  }
+
+  .option-button {
+    font-size: 14px;
+  }
+
+  .wave svg {
+    height: 90px;
+  }
+}
