@@ -16,6 +16,7 @@ const Header = () => {
   const menus = useSelector((state) => state.auth.menus);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const profilePath = useSelector((state)=>state.auth.profilePath);
 
   // Dummy Profile Info (replace with real user data)
   const profile = {
@@ -31,7 +32,8 @@ const Header = () => {
 
   // Navigate to Profile Edit
   const handleProfileEdit = () => {
-    navigate("/profile/edit"); // Redirect to profile edit page
+    console.log(profilePath);
+    navigate(profilePath); // Redirect to profile edit page
   };
 
   return (

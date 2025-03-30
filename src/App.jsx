@@ -10,6 +10,7 @@ import StudentsList from './app/components/students/StudentList'
 import StudentRegister from './app/components/students/StudentRegister'
 import StudentEdit from './app/components/students/StudentEdit'
 import StudentView from './app/components/students/StudentView'
+import EditSchool from './app/components/school/EditSchool'
 
 function App() {
   const students = [
@@ -83,6 +84,7 @@ function App() {
         <Route path="students/register" element={<StudentRegister title="register"/>} />
         <Route path="students/edit/:id" element={<StudentEdit students={students} />} title="edit"/>
         <Route path="students/view/:id" element={<StudentView students={students} />} title="view"/>
+        <Route path="profile-school" element={<EditSchool title="edit"></EditSchool>}></Route>
       </Route>
 
       {/* 404 Route */}

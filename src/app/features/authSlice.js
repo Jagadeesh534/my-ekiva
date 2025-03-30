@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   loginType: "", // Login Type: student, school, teacher
+  profilePath:'',
   menus: [], // To store menu options
 };
 
@@ -11,6 +12,7 @@ const authSlice = createSlice({
   reducers: {
     setLoginType: (state, action) => {
       state.loginType = action.payload;
+      state.profilePath = '/dashboard/profile-'+state.loginType;
 
       // Set dynamic menus based on login type
       switch (action.payload) {
