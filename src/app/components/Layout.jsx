@@ -1,16 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import Breadcrumbs from "./Breadcrumbs";
 
-const Layout = ({ title, breadcrumbItems }) => {
+const Layout = ({ title }) => {
     const location = useLocation();
-    const defaultBreadcrumbItems = breadcrumbItems || [
-        { name: "Home", path: "/" },
-        { name: "Dashboard", path: "/dashboard" },
-        { name: title || "Page", path: location.pathname },
-      ];
+    const [breadcrumbItems, setBreadcrumbItems] = useState([
+       
+      ]);
+      useEffect(() => {
+        // Dynamic breadcrumb update based on pathname
+        const pathSegments = location.pathname.split("/").filter((path) => path);
+    
+        const newBreadcrumbItems = [
+          ...pathSegments.map((segment, index) => {
+            const path = `/${pathSegments.slice(0, index + 1).join("/")}`;
+            let name = segment.charAt(0).toUpperCase() + segment.slice(1);
+    
+            // Handle specific route names
+            if (segment === "students") name = "Students";
+            if (segment === "register") name = "Register Student";
+            if (segment === "edit") name = "Edit Student";
+            if (segment === "view") name = "View Student";
+    
+            return { name, path };
+          }),
+        ];
+    
+        setBreadcrumbItems(newBreadcrumbItems);
+      }, [location.pathname]);    
   return (
     <div className="app-container">
       {/* Fixed Header */}
@@ -20,7 +39,7 @@ const Layout = ({ title, breadcrumbItems }) => {
       <main className="main-content">
       <div className="breadcrumb-section">
           {/* Dynamic Breadcrumbs */}
-          <Breadcrumbs items={defaultBreadcrumbItems} />
+          <Breadcrumbs items={breadcrumbItems} />
         </div>
 
         <Outlet />

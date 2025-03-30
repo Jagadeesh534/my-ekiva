@@ -79,10 +79,10 @@ function App() {
       {/* Protected Routes with Layout */}
       <Route path="/dashboard" element={<Layout title="Dashboard"/>}>
         <Route index element={<Dashboard />} />
-        <Route path="students" element={<StudentsList />} />
-        <Route path="students/register" element={<StudentRegister />} />
-        <Route path="students/edit/:id" element={<StudentEdit students={students} />} />
-        <Route path="students/view/:id" element={<StudentView students={students} />} />
+        <Route path="students" element={<StudentsList title="studnets"/>} />
+        <Route path="students/register" element={<StudentRegister title="register"/>} />
+        <Route path="students/edit/:id" element={<StudentEdit students={students} />} title="edit"/>
+        <Route path="students/view/:id" element={<StudentView students={students} />} title="view"/>
       </Route>
 
       {/* 404 Route */}
