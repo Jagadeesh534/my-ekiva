@@ -9,7 +9,7 @@ const Dashboard = () => {
     {
       title: "Revenue",
       icon: <FaDollarSign className="icon-style" />,
-      metric: "$12,540",
+      metric: "Rs. 12,54000/-",
       footer: "Last Month",
       path: "/revenue",
     },
@@ -18,7 +18,7 @@ const Dashboard = () => {
       icon: <FaClipboardList className="icon-style" />,
       metric: "7 Pending",
       footer: "Today",
-      path: "/content-review",
+      path: "/dashboard/contents",
     },
     {
       title: "Student List",
