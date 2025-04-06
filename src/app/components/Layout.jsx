@@ -10,15 +10,13 @@ const Layout = ({ title }) => {
        
       ]);
       useEffect(() => {
-        // Dynamic breadcrumb update based on pathname
         const pathSegments = location.pathname.split("/").filter((path) => path);
     
         const newBreadcrumbItems = [
           ...pathSegments.map((segment, index) => {
             const path = `/${pathSegments.slice(0, index + 1).join("/")}`;
             let name = segment.charAt(0).toUpperCase() + segment.slice(1);
-    
-            // Handle specific route names
+  
             if (segment === "students") name = "Students";
             if (segment === "register") name = "Register Student";
             if (segment === "edit") name = "Edit Student";

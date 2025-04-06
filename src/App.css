@@ -1,4 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700;800&display=swap');
+@import "slick-carousel/slick/slick.css";
+@import "slick-carousel/slick/slick-theme.css";
+
 
 * {
   box-sizing: border-box;
@@ -942,6 +945,9 @@ body {
   border-radius: 8px;
   margin-bottom: 20px;
 }
+ol.breadcrumb {
+  margin-bottom: 0rem !important;
+}
 
 /* Content Wrapper */
 .content-wrapper {
@@ -951,7 +957,161 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
+.carousel-container {
+  margin-top: 2rem;
+  max-width: 100%;
+}
 
+.carousel-image {
+  width: 100%;
+  height: 300px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.object-fit-cover {
+  object-fit: cover;
+}
+
+
+/* SmartClassroomChat.css */
+
+.chat-wrapper {
+  max-width: 600px;
+  margin: 2rem auto;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+  background-color: #fdfdfd;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.chat-header {
+  background-color: #4a90e2;
+  color: white;
+  padding: 1rem;
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+.chat-body {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background-color: #f7f9fc;
+}
+
+.chat-message {
+  display: flex;
+  flex-direction: column;
+  max-width: 70%;
+  padding: 0.75rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  position: relative;
+}
+
+.teacher-msg {
+  background-color: #e1f5fe;
+  align-self: flex-start;
+}
+
+.student-msg {
+  background-color: #dcedc8;
+  align-self: flex-end;
+}
+
+.sender {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  opacity: 0.8;
+}
+
+.message-text {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.chat-input-area {
+  display: flex;
+  padding: 0.75rem;
+  border-top: 1px solid #eee;
+  background-color: #fff;
+}
+
+.chat-input-area input {
+  flex: 1;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  margin-right: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.chat-input-area button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.chat-input-area button:hover {
+  background-color: #357ab7;
+}
+.chat-container {
+  height: 85vh;
+}
+
+.subject-box {
+  height: 100%;
+}
+
+.chat-box {
+  height: 100%;
+}
+
+.chat-body {
+  background-color: #f5f7fa;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.msg {
+  width: fit-content;
+  max-width: 80%;
+}
+
+.teacher-msg {
+  align-self: flex-start;
+}
+
+.student-msg {
+  align-self: flex-end;
+  text-align: right;
+}
+
+.active-subject {
+  background-color: #0d6efd;
+  color: white;
+  cursor: pointer;
+}
+
+.list-hover:hover {
+  background-color: #e9ecef;
+  cursor: pointer;
+}
 
 .main-content {
   padding-top: 80px; /* Space for header */

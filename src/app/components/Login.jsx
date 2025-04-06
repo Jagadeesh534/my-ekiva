@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import { Container, Button, Row, Col, Form, Card } from "react-bootstrap";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { setUserName } from "../features/authSlice";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleLogin = (e) => {
     e.preventDefault();
     console.log("Logging in with:", { username, password });
+    dispatch(setUserName(username))
     navigate('/dashboard')
 
   };

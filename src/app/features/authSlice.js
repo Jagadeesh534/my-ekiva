@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   loginType: "", // Login Type: student, school, teacher
   profilePath:'',
+  userName:'',
   menus: [], // To store menu options
 };
 
@@ -21,6 +22,8 @@ const authSlice = createSlice({
             { name: "Dashboard", path: "/dashboard" },
             { name: "Courses", path: "/courses" },
             { name: "Profile", path: "/profile" },
+            {name: "Common Library", path:'/common-library'},
+            { name: 'Smart Class Room' ,path:'/dashboard/smart-class'}
           ];
           break;
         case "school":
@@ -34,11 +37,16 @@ const authSlice = createSlice({
             { name: "Assignments", path: "/assignments" },
             { name: "Students", path: "/students" },
             { name: "Profile", path: "/profile" },
+            {name: "Common Library", path:'/common-library'},
+            { name: 'Smart Class Room' ,path:'/dashboard/smart-class'}
           ];
           break;
         default:
           state.menus = [];
       }
+    },
+    setUserName: (state, action) =>{
+      state.userName = action.payload;
     },
     clearLoginType: (state) => {
       state.loginType = "";
@@ -47,5 +55,5 @@ const authSlice = createSlice({
   },
 });
 
-export const { setLoginType, clearLoginType } = authSlice.actions;
+export const { setLoginType, clearLoginType,setUserName } = authSlice.actions;
 export default authSlice.reducer;

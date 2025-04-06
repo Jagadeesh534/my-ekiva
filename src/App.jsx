@@ -14,8 +14,13 @@ import EditSchool from "./app/components/school/EditSchool";
 import Contents from "./app/components/school/review/Contents";
 import Subjects from "./app/components/school/review/Subjects";
 import Topics from "./app/components/school/review/Topics";
+import StudentHome from "./app/components/students/StudentHome";
+import SmartClassroomChat from "./app/components/SmartClassroomChat";
+import { useSelector } from "react-redux";
 
 function App() {
+
+  const loginType = useSelector((state)=> state.auth.loginType);
   const students = [
     {
       id: 1,
@@ -106,16 +111,23 @@ function App() {
             <Route index element={<Contents title="Contents" />} />
             <Route path="class/:classId">
               <Route index element={<Subjects title="Subjects" />} />
-              <Route path=":subjectId/topics" element={<Topics title="Topics" />} />
+              <Route
+                path=":subjectId/topics"
+                element={<Topics title="Topics" />}
+              />
             </Route>
           </Route>
-
 
           <Route
             path="profile-school"
             element={<EditSchool title="edit"></EditSchool>}
           ></Route>
+          <Route
+            path="smart-class"
+            element={<SmartClassroomChat role={loginType}></SmartClassroomChat>}
+          ></Route>
         </Route>
+        
 
         {/* 404 Route */}
         <Route path="*" element={<NotFound />} />
