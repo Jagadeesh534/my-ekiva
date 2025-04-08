@@ -1,47 +1,73 @@
-// pages/subjects/SubjectListPage.jsx
 import React, { useEffect, useState } from "react";
-import SubjectGrid from "./SubjectGrid";
-import axiosInstance from '../../../axiosInstance';
-import Loader from "../../Loader";
+import { Button } from "react-bootstrap";
+import SubjectFormModal from "./SubjectModal";
+import SubjectCard from "./SubjectCard";
+
+const dummySubjects = [
+  {
+    id: 1,
+    name: "Mathematics",
+    teachers: [{ id: 1, name: "Mr. Sharma" }, { id: 2, name: "Ms. Nisha" }],
+  },
+  {
+    id: 2,
+    name: "Science",
+    teachers: [{ id: 3, name: "Ms. Karen" }],
+  },
+  {
+    id: 3,
+    name: "English",
+    teachers: [{ id: 4, name: "Mr. Singh" }, { id: 5, name: "Ms. Priya" }],
+  },
+];
+
 const SubjectListPage = () => {
-  const [subjects, setSubjects] = useState([
-  ]);
-  const [loading, setLoading] = useState(true);
+  const [subjects, setSubjects] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedSubject, setSelectedSubject] = useState(null);
+
+  const fetchSubjects = () => {
+    setSubjects(dummySubjects);
+  };
 
   useEffect(() => {
-    debugger
-    const fetchSubjects = async () => {
-      try {
-        setLoading(true);
-        const response = await axiosInstance.get("subjects/");
-        setSubjects(response.data);
-        setLoading(false);
-        console.log("Subjects fetched:", response.data);
-      } catch (error) {
-        setLoading(false);
-        console.error("Error fetching subjects:", error);
-      }
-    };
-
     fetchSubjects();
   }, []);
-  const handleDelete = (id) => {
-    const confirm = window.confirm("Delete this subject?");
-    if (confirm) {
-      setSubjects(subjects.filter((s) => s.id !== id));
-    }
+
+  const handleEdit = (subject) => {
+    setSelectedSubject(subject);
+    setShowModal(true);
   };
-  if(loading) return <Loader />;
+
+  const handleModalClose = () => {
+    setShowModal(false);
+    setSelectedSubject(null);
+  };
+
   return (
-    <div>
-      <h2>Subjects</h2>
-      <button
-        className="btn btn-primary mb-3"
-        onClick={() => (window.location.href = "/dashboard/subjects/create")}
-      >
-        ➕ Add Subject
-      </button>
-      <SubjectGrid subjects={subjects} onDelete={handleDelete} />
+    <div className="container mt-4">
+      <div className="d-flex justify-content-between mb-3">
+        <h3>Subjects</h3>
+        <Button onClick={() => setShowModal(true)}>+ Add Subject</Button>
+      </div>
+      <div className="row g-4">
+        {subjects.map((subject) => (
+          <div className="col-md-4" key={subject.id}>
+            <SubjectCard
+              subject={subject}
+              onEdit={() => handleEdit(subject)}
+            />
+          </div>
+        ))}
+      </div>
+      {showModal && (
+        <SubjectFormModal
+          show={showModal}
+          onHide={handleModalClose}
+          onSave={fetchSubjects}
+          subject={selectedSubject}
+        />
+      )}
     </div>
   );
 };

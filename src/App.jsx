@@ -18,8 +18,6 @@ import StudentHome from "./app/components/students/StudentHome";
 import SmartClassroomChat from "./app/components/SmartClassroomChat";
 import { useSelector } from "react-redux";
 import SubjectListPage from "./app/components/school/subjects/SubjectListPage";
-import SubjectCreatePage from "./app/components/school/subjects/SubjectCreatePage";
-import SubjectEditPage from "./app/components/school/subjects/SubjectEditPage";
 import Classes from "./app/components/school/Classes/Classes";
 
 function App() {
@@ -94,7 +92,7 @@ function App() {
       sections: ["A", "B"],
     },
   ];
-  
+
   return (
     <>
       <Routes>
@@ -122,9 +120,10 @@ function App() {
           />
           {/* studnts view ends */}
 
-          <Route path="subjects" element={<SubjectListPage title="Subjects"/>} />
-          <Route path="subjects/create" element={<SubjectCreatePage title="Create Subject"/>} />
-          <Route path="subjects/edit/:id" element={<SubjectEditPage title="Edit Subject"/>} />
+          <Route
+            path="subjects"
+            element={<SubjectListPage title="Subjects" />}
+          />
 
           {/* Content Review Routes */}
           <Route path="contents">
@@ -137,8 +136,12 @@ function App() {
               />
             </Route>
           </Route>
-          <Route path="class" >
-            <Route index element={<Classes title="Classes"  />} />
+          <Route path="class">
+            <Route index element={<Classes title="Classes" />} />
+            <Route
+              path=":classId/section/:sectionId/students"
+              element={<StudentsList title="Students" />}
+            />
           </Route>
 
           <Route

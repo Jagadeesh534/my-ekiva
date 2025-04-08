@@ -75,11 +75,11 @@ const Dashboard = () => {
         path: "/dashboard/contents",
       },
       {
-        title: "Student List",
-        icon: <FaUserAlt className="icon-style" />,
-        metric: "1,245",
-        footer: "Total Enrolled",
-        path: "/dashboard/students",
+        title: "Class Directory",
+        icon: <FaGraduationCap className="icon-style" />,
+        metric: "10",
+        footer: "Classes",
+        path: "/dashboard/class",
       },
       {
         title: "Student Tracking",
@@ -94,13 +94,6 @@ const Dashboard = () => {
         metric: "10",
         footer: "Subjects",
         path: "/dashboard/subjects",
-      },
-      {
-        title: "Classes",
-        icon: <FaGraduationCap className="icon-style" />,
-        metric: "10",
-        footer: "Classes",
-        path: "/dashboard/class",
       }
     ];
     const cardDataStudent = [
