@@ -125,24 +125,4 @@ const StudentGrid = () => {
     </div>
   );
 };
-
-const sampleStudents = [
-  {
-    id: 1,
-    name: "John Doe",
-    className: "10th Grade",
-    status: "Active",
-    rollNumber: "A101",
-    avatar: "https://via.placeholder.com/100",
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    className: "9th Grade",
-    status: "Inactive",
-    rollNumber: "A102",
-    avatar: "https://via.placeholder.com/100",
-  },
-];
-
 export default StudentGrid;

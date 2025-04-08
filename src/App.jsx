@@ -17,10 +17,13 @@ import Topics from "./app/components/school/review/Topics";
 import StudentHome from "./app/components/students/StudentHome";
 import SmartClassroomChat from "./app/components/SmartClassroomChat";
 import { useSelector } from "react-redux";
+import SubjectListPage from "./app/components/school/subjects/SubjectListPage";
+import SubjectCreatePage from "./app/components/school/subjects/SubjectCreatePage";
+import SubjectEditPage from "./app/components/school/subjects/SubjectEditPage";
+import Classes from "./app/components/school/Classes/Classes";
 
 function App() {
-
-  const loginType = useSelector((state)=> state.auth.loginType);
+  const loginType = useSelector((state) => state.auth.loginType);
   const students = [
     {
       id: 1,
@@ -79,6 +82,19 @@ function App() {
       avatar: "https://randomuser.me/api/portraits/men/8.jpg",
     },
   ];
+  const classes = [
+    {
+      id: 1,
+      name: "Class 6",
+      sections: ["A", "B", "C"],
+    },
+    {
+      id: 2,
+      name: "Class 7",
+      sections: ["A", "B"],
+    },
+  ];
+  
   return (
     <>
       <Routes>
@@ -106,6 +122,10 @@ function App() {
           />
           {/* studnts view ends */}
 
+          <Route path="subjects" element={<SubjectListPage title="Subjects"/>} />
+          <Route path="subjects/create" element={<SubjectCreatePage title="Create Subject"/>} />
+          <Route path="subjects/edit/:id" element={<SubjectEditPage title="Edit Subject"/>} />
+
           {/* Content Review Routes */}
           <Route path="contents">
             <Route index element={<Contents title="Contents" />} />
@@ -117,6 +137,9 @@ function App() {
               />
             </Route>
           </Route>
+          <Route path="class" >
+            <Route index element={<Classes title="Classes"  />} />
+          </Route>
 
           <Route
             path="profile-school"
@@ -127,7 +150,6 @@ function App() {
             element={<SmartClassroomChat role={loginType}></SmartClassroomChat>}
           ></Route>
         </Route>
-        
 
         {/* 404 Route */}
         <Route path="*" element={<NotFound />} />

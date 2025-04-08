@@ -3,20 +3,58 @@ import { Container, Button, Row, Col, Form, Card } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setUserName } from "../features/authSlice";
-
+import axios from 'axios';
+import Loader from "./Loader";
+const API_BASE = 'https://4d61-117-202-50-217.ngrok-free.app/api';
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const handleLogin = (e) => {
+  const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState(null);
+
+  const handleLogin = async (e) => {
     e.preventDefault();
     console.log("Logging in with:", { username, password });
     dispatch(setUserName(username))
-    navigate('/dashboard')
 
+    try {
+
+      setLoading(true);
+      const response = await axios.post(`${API_BASE}/token/`, {
+        username: username,
+        password: password,
+      });   
+      // const response = await axios.post(`${API_BASE}/token/`, {
+      //   email: username,
+      //   password: password,
+      // });
+      console.log("Response:", response.data);
+  
+
+      const { access, refresh } = response.data;
+      debugger
+      localStorage.setItem('access_token', access);
+      localStorage.setItem('refresh_token', refresh);
+      setToken(access);
+      console.log("Login successful:", response.data);
+      if (response.status === 200) {
+        navigate("/dashboard");
+        setLoading(false);
+      } else {
+        alert("Login failed");
+        navigate("/");
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Login failed:", error);
+      setLoading(false);
+      navigate("/dashboard");
+      throw error;
+    }
   };
-
+  if(loading) return <Loader />;
   return (
     <div className="app-container">
       {/* Header Section with Wave */}

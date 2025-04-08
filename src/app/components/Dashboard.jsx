@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FaDollarSign,FaClock, FaClipboardList,FaTrophy, FaUserAlt, FaUserCheck, FaChartLine,FaChevronDown, FaChevronUp } from "react-icons/fa";
+import { FaDollarSign,FaClock, FaClipboardList,FaTrophy, FaUserAlt, FaUserCheck, FaChartLine,FaChevronDown, FaChevronUp, FaBook, FaGraduationCap } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import Slider from "react-slick";
 const Dashboard = () => {
@@ -88,6 +88,20 @@ const Dashboard = () => {
         footer: "Attendance Rate",
         path: "/student-tracking",
       },
+      {
+        title: "Subjects",
+        icon: <FaBook className="icon-style" />,
+        metric: "10",
+        footer: "Subjects",
+        path: "/dashboard/subjects",
+      },
+      {
+        title: "Classes",
+        icon: <FaGraduationCap className="icon-style" />,
+        metric: "10",
+        footer: "Classes",
+        path: "/dashboard/class",
+      }
     ];
     const cardDataStudent = [
       {
