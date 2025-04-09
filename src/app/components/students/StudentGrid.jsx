@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  fetchStudents,
   deleteStudent,
+  selectedStudnet
 } from "../../features/studentSlice";
 import { useNavigate } from "react-router-dom";
+import { Button } from "react-bootstrap";
 
 const StudentGrid = () => {
   const dispatch = useDispatch();
@@ -42,7 +43,7 @@ const StudentGrid = () => {
   return (
     <div className="grid-container">
       {/* Search Bar */}
-      <div className="search-container">
+      <div className="search-container justify-content-around">
         <input
           type="text"
           className="search-input"
@@ -50,7 +51,9 @@ const StudentGrid = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
+         <Button onClick={() => navigate(`/dashboard/students/register`)}>+ Add Student</Button>
       </div>
+     
 
       {/* Student Cards */}
       <div className="grid-row">
@@ -80,16 +83,21 @@ const StudentGrid = () => {
               <div className="card-actions">
                 <button
                   className="btn btn-outline-primary me-2"
-                  onClick={() =>
-                    navigate(`/dashboard/students/view/${student.id}`)
+                  onClick={() => {
+                    dispatch(selectedStudnet(student.id))
+                    navigate(`/dashboard/students/view`);
+
+
+                  }
                   }
                 >
                   View
                 </button>
                 <button
                   className="btn btn-outline-secondary me-2"
-                  onClick={() =>
-                    navigate(`/dashboard/students/edit/${student.id}`)
+                  onClick={() =>{
+                    dispatch(selectedStudnet(student.id))
+                    navigate(`/dashboard/students/edit`)}
                   }
                 >
                   Edit

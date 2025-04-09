@@ -1,30 +1,77 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
+import Select from "react-select";
 
-const dummyTeachers = ["Mr. Sharma", "Ms. Karen", "Mr. Singh", "Ms. Emily"];
+// Dummy teachers
+const dummyTeachers = [
+  { id: 1, name: "Mr. Sharma" },
+  { id: 2, name: "Ms. Karen" },
+  { id: 3, name: "Mr. Singh" },
+  { id: 4, name: "Ms. Emily" },
+];
+
+// Dummy classes
+const dummyClasses = [
+  { id: 1, name: "Class 6" },
+  { id: 2, name: "Class 7" },
+  { id: 3, name: "Class 8" },
+  { id: 4, name: "Class 9" },
+];
+
+// Convert to react-select format
+const teacherOptions = dummyTeachers.map((t) => ({
+  value: t.name,
+  label: t.name,
+}));
+const classOptions = dummyClasses.map((c) => ({
+  value: c.name,
+  label: c.name,
+}));
 
 const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
-  const [formData, setFormData] = useState({ name: "", teachers: [] });
+  const [formData, setFormData] = useState({
+    name: "",
+    teachers: [],
+    classes: [],
+  });
 
   useEffect(() => {
     if (subject) {
       setFormData({
         name: subject.name || "",
-        teachers: subject.teachers?.map((t) => t.name) || [],
+        teachers:
+          subject.teachers?.map((t) => ({
+            value: t.name,
+            label: t.name,
+          })) || [],
+        classes:
+          subject.classes?.map((c) => ({
+            value: c.name,
+            label: c.name,
+          })) || [],
       });
     } else {
-      setFormData({ name: "", teachers: [] });
+      setFormData({ name: "", teachers: [], classes: [] });
     }
   }, [subject]);
 
-  const handleTeacherChange = (e) => {
-    const selected = Array.from(e.target.selectedOptions, (opt) => opt.value);
-    setFormData({ ...formData, teachers: selected });
-  };
-
   const handleSubmit = () => {
-    console.log("Saving subject:", formData);
-    onSave(); // Refresh dummy data or trigger fetch
+    const selectedTeachers = formData.teachers.map((t) => ({
+      name: t.value,
+    }));
+
+    const selectedClasses = formData.classes.map((c) => ({
+      name: c.value,
+    }));
+
+    const newSubject = {
+      name: formData.name,
+      teachers: selectedTeachers,
+      classes: selectedClasses,
+    };
+
+    console.log("Saving subject:", newSubject);
+    onSave(newSubject); // optionally pass data back
     onHide();
   };
 
@@ -35,6 +82,7 @@ const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
       </Modal.Header>
       <Modal.Body>
         <Form>
+          {/* Subject Name */}
           <Form.Group controlId="subjectName" className="mb-3">
             <Form.Label>Subject Name</Form.Label>
             <Form.Control
@@ -47,26 +95,40 @@ const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
             />
           </Form.Group>
 
-          <Form.Group controlId="teacherSelect" className="mb-3">
+          {/* Teacher Selection */}
+          <Form.Group controlId="teacherMultiSelect" className="mb-3">
             <Form.Label>Assign Teachers</Form.Label>
-            <Form.Control
-              as="select"
-              multiple
+            <Select
+              isMulti
+              options={teacherOptions}
               value={formData.teachers}
-              onChange={handleTeacherChange}
-            >
-              {dummyTeachers.map((teacher, idx) => (
-                <option key={idx} value={teacher}>
-                  {teacher}
-                </option>
-              ))}
-            </Form.Control>
-            <Form.Text className="text-muted">
-              Hold Ctrl (or Cmd) to select multiple teachers.
-            </Form.Text>
+              onChange={(selected) =>
+                setFormData({ ...formData, teachers: selected })
+              }
+              className="basic-multi-select"
+              classNamePrefix="select"
+              placeholder="Select one or more teachers..."
+            />
+          </Form.Group>
+
+          {/* Class Selection */}
+          <Form.Group controlId="classMultiSelect" className="mb-3">
+            <Form.Label>Associate Classes</Form.Label>
+            <Select
+              isMulti
+              options={classOptions}
+              value={formData.classes}
+              onChange={(selected) =>
+                setFormData({ ...formData, classes: selected })
+              }
+              className="basic-multi-select"
+              classNamePrefix="select"
+              placeholder="Select one or more classes..."
+            />
           </Form.Group>
         </Form>
       </Modal.Body>
+
       <Modal.Footer>
         <Button variant="secondary" onClick={onHide}>
           Cancel

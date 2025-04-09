@@ -1,9 +1,12 @@
 import React from "react";
 import { Container, Card, Row, Col, Button } from "react-bootstrap";
-import { useNavigate, useParams } from "react-router-dom";
+import { useSelector,useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { selectedStudnet } from "../../features/studentSlice";
 
 const StudentView = ({ students }) => {
-  const { id } = useParams();
+  const id = useSelector((state) => state.student.selectedStudent);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   // Find Student by ID
@@ -14,7 +17,7 @@ const StudentView = ({ students }) => {
     return (
       <Container className="mt-5 text-center">
         <h4 className="text-danger">⚠️ Student not found!</h4>
-        <Button variant="secondary" onClick={() => navigate("/dashboard/students")}>
+        <Button variant="secondary" onClick={() => {navigate("/dashboard/students"); dispatch(selectedStudnet(null))}}>
           🔙 Back to Students
         </Button>
       </Container>

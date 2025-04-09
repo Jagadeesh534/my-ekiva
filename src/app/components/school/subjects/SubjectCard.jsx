@@ -18,6 +18,13 @@ const SubjectCard = ({ subject, onEdit }) => {
             : "None Assigned"}
         </p>
 
+        <p className="mb-2">
+          <strong>Classes:</strong>{" "}
+          {subject.classes?.length
+            ? subject.classes.map((c) => c.name).join(", ")
+            : "None Assigned"}
+        </p>
+
         <Button variant="outline-secondary" size="sm" onClick={onEdit}>
           Edit
         </Button>

@@ -5,6 +5,7 @@ import { FaUserGraduate, FaChalkboardTeacher, FaSchool } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLoginType } from "../features/authSlice";
+import ekivaLogo from "/src/assets/ekiva-logo.svg";
 const Landing = () => {
   const options = [
     { icon: <FaUserGraduate />, label: "Student" , value:'student'},
@@ -24,7 +25,7 @@ const Landing = () => {
       {/* Header Section with Wave */}
       <header className="wave-header">
         <div className="header-content">
-          <img src="/logo.png" alt="My Ekiva Logo" className="logo" />
+        <img src={ekivaLogo} alt="logo" width={100} />
           <h1 className="title">My Ekiva</h1>
           <p className="subtitle">Teachers, AI, a New Journey</p>
         </div>

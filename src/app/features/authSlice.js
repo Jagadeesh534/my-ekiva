@@ -1,59 +1,54 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+const token = localStorage.getItem("access_token");
+
 const initialState = {
-  loginType: "", // Login Type: student, school, teacher
-  profilePath:'',
-  userName:'',
-  menus: [], // To store menu options
+  loginType: "",               // student | school | teacher
+  userInfo: null,              // { userName, schoolName, email, etc. }
+  menus: [],                   // Can be set from backend
+  isAuthenticated: !!token,    // Check token at init
+  profilePath: "",             // Dynamic profile route
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    setLoginType: (state, action) => {
-      state.loginType = action.payload;
-      state.profilePath = '/dashboard/profile-'+state.loginType;
+    loginSuccess: (state, action) => {
+      debugger
+      const { loginType, userInfo, token, menus } = action.payload;
+      state.loginType = loginType;
+      state.userInfo = userInfo || null;
+      state.menus = menus || [];
+      state.isAuthenticated = true;
+      state.profilePath = `/dashboard/profile-${loginType}`;
 
-      // Set dynamic menus based on login type
-      switch (action.payload) {
-        case "student":
-          state.menus = [
-            { name: "Dashboard", path: "/dashboard" },
-            { name: "Courses", path: "/courses" },
-            { name: "Profile", path: "/profile" },
-            {name: "Common Library", path:'/common-library'},
-            { name: 'Smart Class Room' ,path:'/dashboard/smart-class'}
-          ];
-          break;
-        case "school":
-          state.menus = [
-            
-          ];
-          break;
-        case "teacher":
-          state.menus = [
-            { name: "Dashboard", path: "/dashboard" },
-            { name: "Assignments", path: "/assignments" },
-            { name: "Students", path: "/students" },
-            { name: "Profile", path: "/profile" },
-            {name: "Common Library", path:'/common-library'},
-            { name: 'Smart Class Room' ,path:'/dashboard/smart-class'}
-          ];
-          break;
-        default:
-          state.menus = [];
+      if (token) {
+        localStorage.setItem("access_token", token);
       }
     },
-    setUserName: (state, action) =>{
-      state.userName = action.payload;
-    },
-    clearLoginType: (state) => {
+
+    logout: (state) => {
       state.loginType = "";
+      state.userInfo = null;
       state.menus = [];
+      state.isAuthenticated = false;
+      state.profilePath = "";
+      localStorage.removeItem("access_token");
     },
+
+    updateMenus: (state, action) => {
+      state.menus = action.payload;
+    },
+
+    updateUserInfo: (state, action) => {
+      state.userInfo = action.payload;
+    },
+    setLoginType: (state,action)=>{
+      state.loginType = action.payload;
+    }
   },
 });
 
-export const { setLoginType, clearLoginType,setUserName } = authSlice.actions;
+export const { loginSuccess, logout, updateMenus, updateUserInfo,setLoginType } = authSlice.actions;
 export default authSlice.reducer;

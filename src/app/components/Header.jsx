@@ -10,15 +10,14 @@ import {
   Image,
 } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
-import { clearLoginType } from "../features/authSlice";
+import { logout } from "../features/authSlice";
 
 const Header = () => {
   const menus = useSelector((state) => state.auth.menus);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const profilePath = useSelector((state)=>state.auth.profilePath);
-
-  // Dummy Profile Info (replace with real user data)
+  const userInfo = useSelector((state)=> state.auth.userInfo)
   const profile = {
     name: "John Doe",
     avatar: "https://via.placeholder.com/40", // Replace with user avatar URL
@@ -26,7 +25,7 @@ const Header = () => {
 
   // Handle Logout
   const handleLogout = () => {
-    dispatch(clearLoginType()); // Clear login data from Redux
+    dispatch(logout()); // Clear login data from Redux
     navigate("/"); // Redirect to login page
   };
 
@@ -86,7 +85,7 @@ const Header = () => {
   title={
     <>
       <FaUserCircle className="me-1 d-none d-lg-inline" size={22} />
-      <span className="d-none d-lg-inline">Profile</span>
+      <span className="d-none d-lg-inline">{userInfo.username}</span>
     </>
   }
   id="profile-dropdown-desktop"

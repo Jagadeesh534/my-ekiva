@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Container, Form, Button, Card, Row, Col, Image } from "react-bootstrap";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { FaEdit } from "react-icons/fa"; // Import Edit Icon
+import { useDispatch, useSelector } from "react-redux";
 
 const StudentEdit = ({ students }) => {
-  const { id } = useParams();
+  const id = useSelector((s)=>s.student.selectedStudent)
   const navigate = useNavigate();
 
   // Find Student by ID

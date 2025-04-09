@@ -36,11 +36,14 @@ const studentSlice = createSlice({
         (student) => student.id !== action.payload
       );
     },
+    selectedStudnet: (state, action)=>{
+      state.selectedStudent = action.payload;
+    }
   },
 });
 
 // Export Actions
-export const { fetchStudents, addStudent, editStudent, deleteStudent } =
+export const { fetchStudents, addStudent, editStudent, deleteStudent ,selectedStudnet} =
   studentSlice.actions;
 
 // Export Reducer

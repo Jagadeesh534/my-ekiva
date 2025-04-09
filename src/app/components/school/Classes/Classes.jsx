@@ -34,7 +34,7 @@ const Classes = () => {
   };
 
   const handleSectionClick = (classId, section) => {
-    navigate(`/dashboard/class/${classId}/section/${section}/students`);
+    navigate(`/dashboard/class/section/students`);
   };
 
   return (

@@ -7,7 +7,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const loginType = useSelector((state)=> state.auth.loginType);
   const [cards, setCards] = useState([]);
-  const userName = useSelector((state)=> state.auth.userName);
+  const userName = useSelector((state)=> state.auth.userInfo.username);
   const settings = {
     dots: true,
     infinite: true,
