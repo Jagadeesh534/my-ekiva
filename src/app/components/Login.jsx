@@ -5,12 +5,14 @@ import { useNavigate } from "react-router-dom";
 import { loginSuccess, updateUserInfo } from "../features/authSlice";
 import ekivaLogo from "/src/assets/ekiva-logo.svg";
 import Loader from "./Loader";
+import axiosInstance from "../axiosInstance";
 
-const API_BASE = 'https://4d61-117-202-50-217.ngrok-free.app/api';
+const API_BASE = 'https://9417-117-213-190-162.ngrok-free.app/api';
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [response,setResponse] = useState(null)
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -36,19 +38,29 @@ function Login() {
     setErrors({});
     try {
       setLoading(true);
-
-      // Example login simulation
+      try {
+        const res= await axiosInstance.post(`${API_BASE}/tokens/`, {
+          email: username,
+          password: password,
+        });
+        setResponse(res.data);
+        debugger
       dispatch(loginSuccess({
-        loginType: 'school',
-        userInfo: { username, school: "SBSC", role: "ADMIN" },
-        token: "hello",
-        menus: []
+        loginType: "school",
+        user: res.data.user,
+        token: res.data.access,
+        menus: [],
+        schoolStats: res.data.school_stats,
+        school: res.data.school,
       }));
-
-      dispatch(updateUserInfo({ username, school: "SBSC", role: "ADMIN" }));
       localStorage.setItem("access_token", "hello");
-
+      setLoading(false);
       navigate("/dashboard");
+        console.log("Login successful", response);
+      } catch (error) {
+        console.error("Login failed", error);
+      }
+      
     } catch (error) {
       console.error("Login failed:", error);
       setErrors({ password: "Invalid username or password" });

@@ -7,10 +7,6 @@ const dummySubjects = [
   {
     id: 1,
     name: "Mathematics",
-    teachers: [
-      { id: 1, name: "Mr. Sharma" },
-      { id: 2, name: "Ms. Nisha" },
-    ],
     classes: [
       { id: 6, name: "Class 6" },
       { id: 7, name: "Class 7" },
@@ -19,16 +15,11 @@ const dummySubjects = [
   {
     id: 2,
     name: "Science",
-    teachers: [{ id: 3, name: "Ms. Karen" }],
     classes: [{ id: 7, name: "Class 7" }],
   },
   {
     id: 3,
     name: "English",
-    teachers: [
-      { id: 4, name: "Mr. Singh" },
-      { id: 5, name: "Ms. Priya" },
-    ],
     classes: [{ id: 6, name: "Class 6" }],
   },
 ];

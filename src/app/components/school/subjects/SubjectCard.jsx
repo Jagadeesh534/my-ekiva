@@ -12,13 +12,6 @@ const SubjectCard = ({ subject, onEdit }) => {
         </h5>
 
         <p className="mb-2">
-          <strong>Teachers:</strong>{" "}
-          {subject.teachers?.length
-            ? subject.teachers.map((t) => t.name).join(", ")
-            : "None Assigned"}
-        </p>
-
-        <p className="mb-2">
           <strong>Classes:</strong>{" "}
           {subject.classes?.length
             ? subject.classes.map((c) => c.name).join(", ")

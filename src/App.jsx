@@ -19,6 +19,7 @@ import SubjectListPage from "./app/components/school/subjects/SubjectListPage";
 import Classes from "./app/components/school/Classes/Classes";
 import { useSelector } from "react-redux";
 import PrivateRoute from "./PrivateRoute";
+import TeacherListPage from "./app/components/teachers/TeacherListPage";
 
 function App() {
   const loginType = useSelector((state) => state.auth.loginType);
@@ -79,6 +80,8 @@ function App() {
               element={<StudentsList title="Students" />}
             />
           </Route>
+{/* Teachers */}
+<Route path="teachers" element={<TeacherListPage title="Teachers" />} />
 
           {/* Profile & Smart Classroom */}
           <Route

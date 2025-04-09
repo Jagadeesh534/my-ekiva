@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaDollarSign,FaClock, FaClipboardList,FaTrophy, FaUserAlt, FaUserCheck, FaChartLine,FaChevronDown, FaChevronUp, FaBook, FaGraduationCap } from "react-icons/fa";
 import { useSelector } from "react-redux";
@@ -7,7 +7,9 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const loginType = useSelector((state)=> state.auth.loginType);
   const [cards, setCards] = useState([]);
-  const userName = useSelector((state)=> state.auth.userInfo.username);
+  const userInfo = useSelector((state)=> state.auth.userInfo);
+  const schoolStats = useSelector((state)=> state.auth.schoolStats);
+  const school = useSelector((state)=> state.auth.school);
   const settings = {
     dots: true,
     infinite: true,
@@ -61,37 +63,30 @@ const Dashboard = () => {
   useEffect(()=>{
     const cardDataAdmin = [
       {
-        title: "Revenue",
-        icon: <FaDollarSign className="icon-style" />,
-        metric: "Rs. 12,54000/-",
-        footer: "Last Month",
-        path: "/revenue",
-      },
-      {
         title: "Content Review",
         icon: <FaClipboardList className="icon-style" />,
-        metric: "7 Pending",
+        metric: schoolStats.pending_reviews +" Pending",
         footer: "Today",
         path: "/dashboard/contents",
       },
       {
         title: "Class Directory",
         icon: <FaGraduationCap className="icon-style" />,
-        metric: "10",
+        metric: schoolStats.total_students,
         footer: "Classes",
         path: "/dashboard/class",
       },
       {
-        title: "Student Tracking",
+        title: "Teacher Directory",
         icon: <FaUserCheck className="icon-style" />,
-        metric: "98%",
+        metric: schoolStats.total_teachers,
         footer: "Attendance Rate",
-        path: "/student-tracking",
+        path: "/dashboard/teachers",
       },
       {
-        title: "Subjects",
+        title: "Subject Directory",
         icon: <FaBook className="icon-style" />,
-        metric: "10",
+        metric: schoolStats.total_subjects,
         footer: "Subjects",
         path: "/dashboard/subjects",
       }
@@ -136,7 +131,7 @@ const Dashboard = () => {
     <div className="dashboard-container">
       {/* Carousel Section */}
 
-      <h2 className="dashboard-title">Hey, {userName} welcome to Ekiva</h2>
+      <h2 className="dashboard-title">Hello {userInfo.first_name}!  Welcome to My Ekiva</h2>
      { (loginType === 'student') && <div className="carousel-container mt-5">
         <Slider {...settings}>
           {carouselImages.map((imgSrc, index) => (

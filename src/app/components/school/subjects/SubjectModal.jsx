@@ -2,13 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import Select from "react-select";
 
-// Dummy teachers
-const dummyTeachers = [
-  { id: 1, name: "Mr. Sharma" },
-  { id: 2, name: "Ms. Karen" },
-  { id: 3, name: "Mr. Singh" },
-  { id: 4, name: "Ms. Emily" },
-];
+
 
 // Dummy classes
 const dummyClasses = [
@@ -18,11 +12,7 @@ const dummyClasses = [
   { id: 4, name: "Class 9" },
 ];
 
-// Convert to react-select format
-const teacherOptions = dummyTeachers.map((t) => ({
-  value: t.name,
-  label: t.name,
-}));
+
 const classOptions = dummyClasses.map((c) => ({
   value: c.name,
   label: c.name,
@@ -31,7 +21,6 @@ const classOptions = dummyClasses.map((c) => ({
 const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
   const [formData, setFormData] = useState({
     name: "",
-    teachers: [],
     classes: [],
   });
 
@@ -39,11 +28,7 @@ const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
     if (subject) {
       setFormData({
         name: subject.name || "",
-        teachers:
-          subject.teachers?.map((t) => ({
-            value: t.name,
-            label: t.name,
-          })) || [],
+        
         classes:
           subject.classes?.map((c) => ({
             value: c.name,
@@ -56,9 +41,7 @@ const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
   }, [subject]);
 
   const handleSubmit = () => {
-    const selectedTeachers = formData.teachers.map((t) => ({
-      name: t.value,
-    }));
+  
 
     const selectedClasses = formData.classes.map((c) => ({
       name: c.value,
@@ -66,7 +49,6 @@ const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
 
     const newSubject = {
       name: formData.name,
-      teachers: selectedTeachers,
       classes: selectedClasses,
     };
 
@@ -92,22 +74,6 @@ const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
               }
-            />
-          </Form.Group>
-
-          {/* Teacher Selection */}
-          <Form.Group controlId="teacherMultiSelect" className="mb-3">
-            <Form.Label>Assign Teachers</Form.Label>
-            <Select
-              isMulti
-              options={teacherOptions}
-              value={formData.teachers}
-              onChange={(selected) =>
-                setFormData({ ...formData, teachers: selected })
-              }
-              className="basic-multi-select"
-              classNamePrefix="select"
-              placeholder="Select one or more teachers..."
             />
           </Form.Group>
 
