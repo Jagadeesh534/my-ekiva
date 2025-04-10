@@ -20,12 +20,17 @@ import Classes from "./app/components/school/Classes/Classes";
 import { useSelector } from "react-redux";
 import PrivateRoute from "./PrivateRoute";
 import TeacherListPage from "./app/components/teachers/TeacherListPage";
+import TeacherAssignmentPage from "./app/components/teachers/TeacherAssignmentPage";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const loginType = useSelector((state) => state.auth.loginType);
 
   return (
     <>
+    <ToastContainer position="top-right" autoClose={3000} />
+
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Landing />} />
@@ -81,7 +86,11 @@ function App() {
             />
           </Route>
 {/* Teachers */}
-<Route path="teachers" element={<TeacherListPage title="Teachers" />} />
+<Route path="teachers">
+  <Route index element={<TeacherListPage title="Teachers" />} />
+  <Route path="assign" element={<TeacherAssignmentPage title="Assign Teacher" />} />
+</Route>
+
 
           {/* Profile & Smart Classroom */}
           <Route

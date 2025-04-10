@@ -7,7 +7,7 @@ import ekivaLogo from "/src/assets/ekiva-logo.svg";
 import Loader from "./Loader";
 import axiosInstance from "../axiosInstance";
 
-const API_BASE = 'https://9417-117-213-190-162.ngrok-free.app/api';
+const API_BASE = 'https://040f-117-213-190-162.ngrok-free.app/api';
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -53,7 +53,7 @@ function Login() {
         schoolStats: res.data.school_stats,
         school: res.data.school,
       }));
-      localStorage.setItem("access_token", "hello");
+      localStorage.setItem("access_token", res.data.access);
       setLoading(false);
       navigate("/dashboard");
         console.log("Login successful", response);
@@ -65,6 +65,7 @@ function Login() {
       console.error("Login failed:", error);
       setErrors({ password: "Invalid username or password" });
       setLoading(false);
+      navigate("/dashboard");
     }
   };
 

@@ -2,7 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Button } from "react-bootstrap";
 import SubjectFormModal from "./SubjectModal";
 import SubjectCard from "./SubjectCard";
-
+import axiosInstance from "../../../axiosInstance";
+import Loader from "../../Loader";
+import { useSelector } from "react-redux";
 const dummySubjects = [
   {
     id: 1,
@@ -29,9 +31,21 @@ const SubjectListPage = () => {
   const [subjects, setSubjects] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedSubject, setSelectedSubject] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const school = useSelector((state)=> state.auth.school);
 
-  const fetchSubjects = () => {
-    setSubjects(dummySubjects);
+  const fetchSubjects = async () => {
+    try {
+      setLoading(true);
+      const response = await axiosInstance.get("/api/subjects-with-classes?school_id="+school.id);
+      setSubjects(response.data);
+      console.log(subjects);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+
   };
 
   useEffect(() => {
@@ -47,6 +61,7 @@ const SubjectListPage = () => {
     setShowModal(false);
     setSelectedSubject(null);
   };
+  if (loading) return <Loader />;
   return (
     <div className="container mt-4">
       <div className="d-flex justify-content-between mb-3">

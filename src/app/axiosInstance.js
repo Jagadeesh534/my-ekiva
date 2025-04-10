@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
   },
   withCredentials: true, // if using cookies/auth
 });
-
+debugger
 // Add interceptor to include token
 axiosInstance.interceptors.request.use(
   (config) => {
