@@ -1,17 +1,24 @@
 // components/school/Classes/ClassFormModal.jsx
 import React, { useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
-import axios from "axios";
 import { useSelector } from "react-redux";
-import axiosInstance from "../../../axiosInstance";
 import { toast } from "react-toastify";
-const API_BASE = "https://040f-117-213-190-162.ngrok-free.app/"; // Replace with your actual API
+import axiosInstance from "../../../axiosInstance";
+
+const API_BASE = "https://040f-117-213-190-162.ngrok-free.app/"; // Use your real API
 
 const ClassFormModal = ({ show, onHide, onSaved }) => {
   const [name, setName] = useState("");
   const [grade, setGrade] = useState("");
-  const schoolId = useSelector((state)=> state.auth.school.id);// default or fetched
   const [sections, setSections] = useState([{ name: "" }]);
+
+  const schoolId = useSelector((state) => state.auth.school.id);
+
+  const resetForm = () => {
+    setName("");
+    setGrade("");
+    setSections([{ name: "" }]);
+  };
 
   const handleSectionChange = (index, value) => {
     const updated = [...sections];
@@ -28,19 +35,40 @@ const ClassFormModal = ({ show, onHide, onSaved }) => {
     updated.splice(index, 1);
     setSections(updated);
   };
+
+  const validateForm = () => {
+    if (!name.trim()) {
+      toast.error("Class name is required ❌");
+      return false;
+    }
+    if (!grade.trim()) {
+      toast.error("Grade is required ❌");
+      return false;
+    }
+    const hasEmptySection = sections.some((sec) => !sec.name.trim());
+    if (hasEmptySection) {
+      toast.error("All sections must have names ❌");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async () => {
+    if (!validateForm()) return;
+
     const payload = {
-      name,
-      grade: grade,
-      school_id: schoolId,
-      sections,
+      name: name.trim(),
+      grade: grade.trim(), // now a string
+      school: schoolId,
+      sections: sections.map((sec) => ({ name: sec.name.trim() })),
     };
-  
+
     try {
       console.log("Submitting:", payload);
-      await axiosInstance.post(`${API_BASE}api/classrooms/`, payload); // your real API endpoint
+      await axiosInstance.post(`${API_BASE}api/classrooms/`, payload);
       toast.success("Class created successfully! ✅");
       onSaved();
+      resetForm();
       onHide();
     } catch (error) {
       console.error("Error saving class:", error);
@@ -68,8 +96,8 @@ const ClassFormModal = ({ show, onHide, onSaved }) => {
             <Col>
               <Form.Label>Grade</Form.Label>
               <Form.Control
-                type="number"
-                placeholder="e.g., 10"
+                type="text"
+                placeholder="e.g., Ten"
                 value={grade}
                 onChange={(e) => setGrade(e.target.value)}
               />
@@ -102,7 +130,10 @@ const ClassFormModal = ({ show, onHide, onSaved }) => {
         </Form>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onHide}>
+        <Button variant="secondary" onClick={() => {
+          resetForm();
+          onHide();
+        }}>
           Cancel
         </Button>
         <Button variant="success" onClick={handleSubmit}>

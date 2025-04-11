@@ -1,32 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Card } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { FaChalkboardTeacher } from "react-icons/fa";
-
-const dummyTeachers = [
-  {
-    id: 1,
-    name: "Ms. Juliet",
-    email: "juliet@school.com",
-    mobile: "9876543210",
-  },
-  {
-    id: 2,
-    name: "Mr. Rahul",
-    email: "rahul@school.com",
-    mobile: "9123456789",
-  },
-  {
-    id: 3,
-    name: "Ms. Nisha",
-    email: "nisha@school.com",
-    mobile: "9876512345",
-  },
-];
+import axiosInstance from "../../axiosInstance";
+const api = 'https://040f-117-213-190-162.ngrok-free.app/api/';
 
 const TeacherListPage = () => {
   const navigate = useNavigate();
-
+  const [teachers, setTeachers] = React.useState([]);
+  useEffect(() => {
+    const fetchTeachers = async () => {
+      try {
+        const response = await axiosInstance.get(`${api}teachers/`);
+        console.log(response.data);
+        setTeachers(response.data);
+      } catch (error) {
+        console.error("Error fetching teachers:", error);
+      }
+    };
+  
+    fetchTeachers();
+  }, []);
   const handleAddTeacher = () => {
     navigate("/dashboard/teachers/assign"); // 👈 Adjust this route if needed
   };
@@ -41,19 +35,19 @@ const TeacherListPage = () => {
       </div>
 
       <div className="row g-4">
-        {dummyTeachers.map((teacher) => (
+        {teachers.map((teacher) => (
           <div key={teacher.id} className="col-md-4">
             <Card className="shadow rounded-4">
               <Card.Body>
                 <h5 className="mb-2">
                   <FaChalkboardTeacher className="me-2 text-primary" />
-                  {teacher.name}
+                  {teacher.user.first_name} {teacher.user.last_name}
                 </h5>
                 <p className="mb-1">
-                  <strong>Email:</strong> {teacher.email}
+                  <strong>Email:</strong> {teacher.user.email}
                 </p>
                 <p className="mb-1">
-                  <strong>Mobile:</strong> {teacher.mobile}
+                  <strong>Mobile:</strong> {teacher.user.phone_number}
                 </p>
                 <Button
                   variant="outline-secondary"

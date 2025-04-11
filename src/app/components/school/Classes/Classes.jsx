@@ -1,19 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, Button, Collapse } from "react-bootstrap";
-import { FaChalkboard, FaChevronDown, FaChevronUp, FaUsers, FaPlus } from "react-icons/fa";
+import {
+  FaChalkboard,
+  FaChevronDown,
+  FaChevronUp,
+  FaUsers,
+  FaPlus,
+} from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import ClassFormModal from "./ClassFormModal"; // 👈 Import the modal
+import axiosInstance from "../../../axiosInstance";
 
-const classData = [
-  { id: 1, name: "Class 1", sections: ["A", "B", "C"] },
-  { id: 2, name: "Class 2", sections: ["A", "B"] },
-  { id: 3, name: "Class 3", sections: ["A"] },
-];
-
+const api = "https://040f-117-213-190-162.ngrok-free.app/api/classrooms/";
 const Classes = () => {
   const [expandedClassIds, setExpandedClassIds] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
+  const [classData, setClassData] = useState([]);
 
   const toggleExpand = (id) => {
     setExpandedClassIds((prev) =>
@@ -29,6 +32,19 @@ const Classes = () => {
     // TODO: refetch or refresh class data from API
     console.log("Class saved!");
   };
+  useEffect(() => {
+    const fetchClassData = async () => {
+      try {
+        const response = await axiosInstance.get(api);
+        console.log("Fetched class data:", response);
+        setClassData(response.data);
+      } catch (error) {
+        console.error("Error fetching class data:", error);
+      }
+    };
+
+    fetchClassData();
+  }, [showModal]);
 
   return (
     <div className="container mt-4">
@@ -55,7 +71,11 @@ const Classes = () => {
                     size="sm"
                     onClick={() => toggleExpand(cls.id)}
                   >
-                    {expandedClassIds.includes(cls.id) ? <FaChevronUp /> : <FaChevronDown />}
+                    {expandedClassIds.includes(cls.id) ? (
+                      <FaChevronUp />
+                    ) : (
+                      <FaChevronDown />
+                    )}
                   </Button>
                 </div>
 
@@ -73,9 +93,10 @@ const Classes = () => {
                           style={{ cursor: "pointer" }}
                           onClick={() => handleSectionClick(cls.id, sec)}
                         >
-                          Section {sec}
+                          Section {sec.name}
                         </li>
                       ))}
+                      {cls.sections.length === 0 && (<p>No Sections </p>)}
                     </ul>
                   </div>
                 </Collapse>

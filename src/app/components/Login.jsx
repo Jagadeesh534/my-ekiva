@@ -58,6 +58,7 @@ function Login() {
       navigate("/dashboard");
         console.log("Login successful", response);
       } catch (error) {
+        setLoading(false)
         console.error("Login failed", error);
       }
       
