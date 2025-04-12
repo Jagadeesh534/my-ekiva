@@ -7,7 +7,7 @@ import ekivaLogo from "/src/assets/ekiva-logo.svg";
 import Loader from "./Loader";
 import axiosInstance from "../axiosInstance";
 
-const API_BASE = 'https://040f-117-213-190-162.ngrok-free.app/api';
+const API_BASE = 'https://22c3-117-202-57-80.ngrok-free.app/api';
 
 function Login() {
   const [username, setUsername] = useState("");

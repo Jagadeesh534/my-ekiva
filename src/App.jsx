@@ -29,7 +29,7 @@ function App() {
 
   return (
     <>
-    <ToastContainer position="top-right" autoClose={3000} />
+      <ToastContainer position="top-right" autoClose={3000} />
 
       <Routes>
         {/* Public Routes */}
@@ -53,14 +53,8 @@ function App() {
             path="students/register"
             element={<StudentRegister title="Register" />}
           />
-          <Route
-            path="students/edit"
-            element={<StudentEdit />}
-          />
-          <Route
-            path="students/view"
-            element={<StudentView />}
-          />
+          <Route path="students/edit" element={<StudentEdit />} />
+          <Route path="students/view" element={<StudentView />} />
 
           {/* Subjects */}
           <Route
@@ -80,23 +74,25 @@ function App() {
           {/* Classes */}
           <Route path="class">
             <Route index element={<Classes title="Classes" />} />
+            <Route path="students" element={<StudentsList title="Students" />}>
+              
+            </Route>
             <Route
-              path="section/students"
-              element={<StudentsList title="Students" />}
+                path="students/register"
+                element={<StudentRegister title="Register" />}
+              />
+          </Route>
+          {/* Teachers */}
+          <Route path="teachers">
+            <Route index element={<TeacherListPage title="Teachers" />} />
+            <Route
+              path="assign"
+              element={<TeacherAssignmentPage title="Assign Teacher" />}
             />
           </Route>
-{/* Teachers */}
-<Route path="teachers">
-  <Route index element={<TeacherListPage title="Teachers" />} />
-  <Route path="assign" element={<TeacherAssignmentPage title="Assign Teacher" />} />
-</Route>
-
 
           {/* Profile & Smart Classroom */}
-          <Route
-            path="profile-school"
-            element={<EditSchool title="Edit" />}
-          />
+          <Route path="profile-school" element={<EditSchool title="Edit" />} />
           <Route
             path="smart-class"
             element={<SmartClassroomChat role={loginType} />}

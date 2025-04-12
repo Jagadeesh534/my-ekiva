@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 // Initial State
 const initialState = {
   students: [],
+  selectedClassObj: null
 };
 
 // Create Slice
@@ -38,12 +39,17 @@ const studentSlice = createSlice({
     },
     selectedStudnet: (state, action)=>{
       state.selectedStudent = action.payload;
+    },
+    // Select Class & section
+    setSelectedClassObj: (state, action) => {
+      state.selectedClassObj = action.payload;
+      console.log("Selected Class Object:", action.payload);
     }
   },
 });
 
 // Export Actions
-export const { fetchStudents, addStudent, editStudent, deleteStudent ,selectedStudnet} =
+export const { fetchStudents, addStudent, editStudent, deleteStudent ,selectedStudnet,setSelectedClassObj} =
   studentSlice.actions;
 
 // Export Reducer

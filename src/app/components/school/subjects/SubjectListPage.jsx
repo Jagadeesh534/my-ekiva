@@ -5,28 +5,7 @@ import SubjectCard from "./SubjectCard";
 import axiosInstance from "../../../axiosInstance";
 import Loader from "../../Loader";
 import { useSelector } from "react-redux";
-const dummySubjects = [
-  {
-    id: 1,
-    name: "Mathematics",
-    classes: [
-      { id: 6, name: "Class 6" },
-      { id: 7, name: "Class 7" },
-    ],
-  },
-  {
-    id: 2,
-    name: "Science",
-    classes: [{ id: 7, name: "Class 7" }],
-  },
-  {
-    id: 3,
-    name: "English",
-    classes: [{ id: 6, name: "Class 6" }],
-  },
-];
-
-
+const API_BASE = "https://22c3-117-202-57-80.ngrok-free.app/api";
 const SubjectListPage = () => {
   const [subjects, setSubjects] = useState([]);
   const [showModal, setShowModal] = useState(false);
@@ -37,7 +16,7 @@ const SubjectListPage = () => {
   const fetchSubjects = async () => {
     try {
       setLoading(true);
-      const response = await axiosInstance.get("/api/subjects-with-classes?school_id="+school.id);
+      const response = await axiosInstance.get(API_BASE+"/subjects?school_id="+school.id);
       setSubjects(response.data);
       console.log(subjects);
       setLoading(false);

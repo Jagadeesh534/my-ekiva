@@ -65,28 +65,28 @@ const Dashboard = () => {
       {
         title: "Content Review",
         icon: <FaClipboardList className="icon-style" />,
-        metric: schoolStats.pending_reviews +" Pending",
+        metric: schoolStats?.pending_reviews +" Pending",
         footer: "Today",
         path: "/dashboard/contents",
       },
       {
         title: "Class Directory",
         icon: <FaGraduationCap className="icon-style" />,
-        metric: schoolStats.total_students,
+        metric: schoolStats?.total_students,
         footer: "Classes",
         path: "/dashboard/class",
       },
       {
         title: "Teacher Directory",
         icon: <FaUserCheck className="icon-style" />,
-        metric: schoolStats.total_teachers,
+        metric: schoolStats?.total_teachers,
         footer: "Attendance Rate",
         path: "/dashboard/teachers",
       },
       {
         title: "Subject Directory",
         icon: <FaBook className="icon-style" />,
-        metric: schoolStats.total_subjects,
+        metric: schoolStats?.total_subjects,
         footer: "Subjects",
         path: "/dashboard/subjects",
       }
@@ -131,8 +131,8 @@ const Dashboard = () => {
     <div className="dashboard-container">
       {/* Carousel Section */}
 
-      <h2 className="dashboard-title">Hello {userInfo.first_name}!  Welcome to My Ekiva</h2>
-     { (loginType === 'student') && <div className="carousel-container mt-5">
+      <h2 className="dashboard-title">Hello {userInfo?.first_name}!  Welcome to My Ekiva</h2>
+     { (loginType === 'student')   && <div className="carousel-container mt-5">
         <Slider {...settings}>
           {carouselImages.map((imgSrc, index) => (
             <div key={index}>
@@ -165,7 +165,7 @@ const Dashboard = () => {
 
 {/* Subjects Grid */}
 <div className="row text-center justify-content-center g-4">
-  {visibleSubjects.map((subject, index) => (
+  {visibleSubjects?.map((subject, index) => (
     <div key={index} className="col-6 col-md-3">
       <div className="d-flex flex-column align-items-center">
         <div

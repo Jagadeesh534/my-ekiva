@@ -10,13 +10,16 @@ import {
 import { useNavigate } from "react-router-dom";
 import ClassFormModal from "./ClassFormModal"; // 👈 Import the modal
 import axiosInstance from "../../../axiosInstance";
+import { useDispatch } from "react-redux";
+import { setSelectedClassObj } from "../../../features/studentSlice";
 
-const api = "https://040f-117-213-190-162.ngrok-free.app/api/classrooms/";
+const api = "https://22c3-117-202-57-80.ngrok-free.app/api/classrooms/";
 const Classes = () => {
   const [expandedClassIds, setExpandedClassIds] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
   const [classData, setClassData] = useState([]);
+  const dispatch = useDispatch();
 
   const toggleExpand = (id) => {
     setExpandedClassIds((prev) =>
@@ -25,7 +28,11 @@ const Classes = () => {
   };
 
   const handleSectionClick = (classId, section) => {
-    navigate(`/dashboard/class/section/students`);
+    console.log("Class ID:", classId);
+    console.log("Section:", section);
+    dispatch(setSelectedClassObj({section: section, classId: classId}));
+    navigate(`/dashboard/class/students`);
+    
   };
 
   const handleClassSaved = () => {

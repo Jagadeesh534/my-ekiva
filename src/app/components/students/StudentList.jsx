@@ -6,77 +6,27 @@ import { useSelector, useDispatch } from "react-redux";
 import {
   fetchStudents
 } from "../../features/studentSlice";
+import axiosInstance from "../../axiosInstance";
+
+const API_BASE = "https://22c3-117-202-57-80.ngrok-free.app/api/"; // Use your real API
 const StudentsList = () => {
     const dispatch = useDispatch();
-    const students = [
-        {
-          id: 1,
-          rollNumber: 'LA1',
-          name: "John Doe",
-          className: "10th Grade",
-          status: "Active",
-          avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-        },
-        {
-          id: 2,
-          rollNumber: 'LA2',
-          name: "Jane Smith",
-          className: "9th Grade",
-          status: "Inactive",
-          avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-        },
-        {
-          id: 3,
-          rollNumber: 'LA3',
-          name: "Sam Wilson",
-          className: "12th Grade",
-          status: "Active",
-          avatar: "https://randomuser.me/api/portraits/men/3.jpg",
-        },
-        {
-          id: 4,
-          rollNumber: 'LA4',
-          name: "Emma Watson",
-          className: "8th Grade",
-          status: "Active",
-          avatar: "https://randomuser.me/api/portraits/women/4.jpg",
-        },
-        {
-          id: 5,
-          rollNumber: 'LA5',
-          name: "Chris Evans",
-          className: "11th Grade",
-          status: "Inactive",
-          avatar: "https://randomuser.me/api/portraits/men/5.jpg",
-        },
-        {
-          id: 6,
-          rollNumber: 'LA6',
-          name: "Natasha Romanoff",
-          className: "10th Grade",
-          status: "Active",
-          avatar: "https://randomuser.me/api/portraits/women/6.jpg",
-        },
-        {
-          id: 7,
-          rollNumber: 'LA7',
-          name: "Bruce Wayne",
-          className: "9th Grade",
-          status: "Active",
-          avatar: "https://randomuser.me/api/portraits/men/7.jpg",
-        },
-        {
-          id: 8,
-          rollNumber: 'LA8',
-          name: "Tony Stark",
-          className: "12th Grade",
-          status: "Inactive",
-          avatar: "https://randomuser.me/api/portraits/men/8.jpg",
-        },
-      ];
-      // Fetch Sample Students (or API data)
+    const [students,setStudents] = useState([]);
+   const selectedClass = useSelector((state) => state.student.selectedClassObj);
   useEffect(() => {
-    dispatch(fetchStudents(students)); // Replace with API call if needed
+   
+    const fetchStudents = async () => {
+      try {
+        const response = await axiosInstance.get(API_BASE + "students?classroom_id=" + selectedClass.classId + "&section_id=" + selectedClass.section.id);
+        console.log("Fetched students data:", response);
+        setStudents(response.data); 
+      } catch (error) {
+        console.error("Error fetching students data:", error);
+      }
+    };
+
+    fetchStudents();
+
   }, [dispatch]);
 
   return (

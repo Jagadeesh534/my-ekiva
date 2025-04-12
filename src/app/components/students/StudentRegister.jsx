@@ -1,88 +1,230 @@
 import React, { useState } from "react";
 import { Container, Form, Button, Card, Row, Col } from "react-bootstrap";
+import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
+import axiosInstance from "../../axiosInstance";
+const api  = 'https://22c3-117-202-57-80.ngrok-free.app/api/';
 const StudentRegister = () => {
-  const [student, setStudent] = useState({
-    name: "",
-    className: "",
-    status: "Active",
-    avatar: "",
+  const navigate = useNavigate();
+  const selectedClass = useSelector((s)=> s.student.selectedClassObj);
+  const [formData, setFormData] = useState({
+    first_name: "",
+    last_name: "",
+    email: "",
+    username: "",
+    phone_number: "",
+    classroom: "",
+    section: "",
+    roll_number: "",
+    date_of_birth: "",
+    parent_name: "",
+    parent_contact: "",
+    joined_date: "",
+    address: "",
   });
 
-  const navigate = useNavigate();
-
-  // Handle Input Change
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setStudent({ ...student, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle Form Submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Student Registered:", student);
-    alert("Student Registered Successfully!");
-    navigate("/students"); // Redirect to student list
+
+    const payload = {
+      user: {
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        email: formData.email,
+        username: formData.first_name,
+        phone_number: formData.phone_number,
+      },
+      school: 1,
+      classroom: +selectedClass.classId,
+      section: +selectedClass.section.id,
+      roll_number: formData.roll_number,
+      date_of_birth: formData.date_of_birth,
+      parent_name: formData.parent_name,
+      parent_contact: formData.parent_contact,
+      joined_date: formData.joined_date,
+      address: formData.address,
+    };
+
+    console.log("🎓 Final Student Registration Payload:", payload);
+    const response = await axiosInstance.post(`${api}students/`, payload);
+    console.log("Response from server:", response);
+    if (response.status === 201) {
+      alert("Student registered successfully!");
+    }
+    navigate("/dashboard/students");
   };
 
   return (
-    <Container className="mt-5">
+    <Container className="mt-4">
       <Row className="justify-content-center">
-        <Col md={6}>
+        <Col md={8}>
           <Card className="shadow-lg p-4">
-            <h3 className="text-center mb-4">📚 Register New Student</h3>
+            <h3 className="text-center mb-4">📝 Register New Student</h3>
             <Form onSubmit={handleSubmit}>
-              {/* Student Name */}
-              <Form.Group controlId="name" className="mb-3">
+              <Row>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>First Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="first_name"
+                      value={formData.first_name}
+                      onChange={handleChange}
+                      placeholder="Enter first name"
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Last Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="last_name"
+                      value={formData.last_name}
+                      onChange={handleChange}
+                      placeholder="Enter last name"
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="Email address"
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Username</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="username"
+                      value={formData.username}
+                      onChange={handleChange}
+                      placeholder="Username (usually same as email)"
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Phone Number</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="phone_number"
+                      value={formData.phone_number}
+                      onChange={handleChange}
+                      placeholder="Phone number"
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+            
+              </Row>
+
+              <Row>
+                <Col md={4}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Roll Number</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="roll_number"
+                      value={formData.roll_number}
+                      onChange={handleChange}
+                      placeholder="e.g., A123"
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Date of Birth</Form.Label>
+                    <Form.Control
+                      type="date"
+                      name="date_of_birth"
+                      value={formData.date_of_birth}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={4}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Joined Date</Form.Label>
+                    <Form.Control
+                      type="date"
+                      name="joined_date"
+                      value={formData.joined_date}
+                      onChange={handleChange}
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Row>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Parent Name</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="parent_name"
+                      value={formData.parent_name}
+                      onChange={handleChange}
+                      placeholder="Parent's full name"
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+                <Col md={6}>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Parent Contact</Form.Label>
+                    <Form.Control
+                      type="text"
+                      name="parent_contact"
+                      value={formData.parent_contact}
+                      onChange={handleChange}
+                      placeholder="Parent's contact number"
+                      required
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+
+              <Form.Group className="mb-3">
+                <Form.Label>Address</Form.Label>
                 <Form.Control
-                  type="text"
-                  name="name"
-                  value={student.name}
+                  as="textarea"
+                  name="address"
+                  value={formData.address}
                   onChange={handleChange}
-                  placeholder="Enter Student Name"
+                  rows={2}
+                  placeholder="Student's home address"
                   required
                 />
               </Form.Group>
 
-              {/* Class Name */}
-              <Form.Group controlId="className" className="mb-3">
-                <Form.Control
-                  type="text"
-                  name="className"
-                  value={student.className}
-                  onChange={handleChange}
-                  placeholder="Enter Class Name"
-                  required
-                />
-              </Form.Group>
-
-              {/* Status */}
-              <Form.Group controlId="status" className="mb-3">
-                <Form.Select
-                  name="status"
-                  value={student.status}
-                  onChange={handleChange}
-                >
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
-                </Form.Select>
-              </Form.Group>
-
-              {/* Avatar URL */}
-              <Form.Group controlId="avatar" className="mb-3">
-                <Form.Control
-                  type="text"
-                  name="avatar"
-                  value={student.avatar}
-                  onChange={handleChange}
-                  placeholder="Enter Avatar URL"
-                />
-              </Form.Group>
-
-              {/* Submit Button */}
-              <Button variant="primary" type="submit" className="w-100">
-                🚀 Register Student
+              <Button type="submit" variant="primary" className="w-100 mt-2">
+                🎓 Register Student
               </Button>
             </Form>
           </Card>

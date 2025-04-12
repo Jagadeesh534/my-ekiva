@@ -85,7 +85,7 @@ const Header = () => {
   title={
     <>
       <FaUserCircle className="me-1 d-none d-lg-inline" size={22} />
-      <span className="d-none d-lg-inline">{userInfo?.username}</span>
+      <span className="d-none d-lg-inline">{userInfo?.first_name}</span>
     </>
   }
   id="profile-dropdown-desktop"

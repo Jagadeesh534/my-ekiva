@@ -1,25 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  deleteStudent,
-  selectedStudnet
-} from "../../features/studentSlice";
+import { deleteStudent, selectedStudnet } from "../../features/studentSlice";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
 
-const StudentGrid = () => {
+const StudentGrid = ({students}) => {
   const dispatch = useDispatch();
-  const students = useSelector((state) => state.student.students);
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const studentsPerPage = 10;
 
-  
-
   // Filtered Students
   const filteredStudents = students.filter((student) =>
-    student.name.toLowerCase().includes(searchTerm.toLowerCase())
+    student.user.first_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Get Current Page Data
@@ -51,9 +45,10 @@ const StudentGrid = () => {
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-         <Button onClick={() => navigate(`/dashboard/students/register`)}>+ Add Student</Button>
+        <Button onClick={() => navigate(`/dashboard/class/students/register`)}>
+          + Add Student
+        </Button>
       </div>
-     
 
       {/* Student Cards */}
       <div className="grid-row">
@@ -84,21 +79,18 @@ const StudentGrid = () => {
                 <button
                   className="btn btn-outline-primary me-2"
                   onClick={() => {
-                    dispatch(selectedStudnet(student.id))
+                    dispatch(selectedStudnet(student.id));
                     navigate(`/dashboard/students/view`);
-
-
-                  }
-                  }
+                  }}
                 >
                   View
                 </button>
                 <button
                   className="btn btn-outline-secondary me-2"
-                  onClick={() =>{
-                    dispatch(selectedStudnet(student.id))
-                    navigate(`/dashboard/students/edit`)}
-                  }
+                  onClick={() => {
+                    dispatch(selectedStudnet(student.id));
+                    navigate(`/dashboard/students/edit`);
+                  }}
                 >
                   Edit
                 </button>

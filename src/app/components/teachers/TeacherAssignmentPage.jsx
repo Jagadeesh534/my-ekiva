@@ -34,7 +34,7 @@ const sectionsData = {
     { id: 15, name: "B" },
   ],
 };
-const api = "https://040f-117-213-190-162.ngrok-free.app/api/";
+const api = "https://22c3-117-202-57-80.ngrok-free.app/api/";
 const TeacherAssignmentPage = () => {
   const [teacherInfo, setTeacherInfo] = useState({
     id: null,

@@ -3,7 +3,7 @@ import { Button, Card } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import axiosInstance from "../../axiosInstance";
-const api = 'https://040f-117-213-190-162.ngrok-free.app/api/';
+const api = 'https://22c3-117-202-57-80.ngrok-free.app/api/';
 
 const TeacherListPage = () => {
   const navigate = useNavigate();
