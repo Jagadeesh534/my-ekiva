@@ -3,18 +3,23 @@ import { Button, Card } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import axiosInstance from "../../axiosInstance";
+import Loader from "../Loader";
 const api = 'https://22c3-117-202-57-80.ngrok-free.app/api/';
 
 const TeacherListPage = () => {
   const navigate = useNavigate();
   const [teachers, setTeachers] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
   useEffect(() => {
     const fetchTeachers = async () => {
       try {
+        setLoading(true);
         const response = await axiosInstance.get(`${api}teachers/`);
         console.log(response.data);
+        setLoading(false);
         setTeachers(response.data);
       } catch (error) {
+        setLoading(false);
         console.error("Error fetching teachers:", error);
       }
     };
@@ -24,7 +29,7 @@ const TeacherListPage = () => {
   const handleAddTeacher = () => {
     navigate("/dashboard/teachers/assign"); // 👈 Adjust this route if needed
   };
-
+if (loading) return <Loader />;
   return (
     <div className="container mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4">

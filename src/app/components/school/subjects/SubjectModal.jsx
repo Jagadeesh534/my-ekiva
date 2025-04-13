@@ -6,6 +6,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axiosInstance from "../../../axiosInstance";
 import { useSelector } from "react-redux";
+import Loader from "../../Loader";
 const api = "https://22c3-117-202-57-80.ngrok-free.app/api/";
 
 
@@ -14,7 +15,7 @@ const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
   const [errors, setErrors] = useState({});
   const [classData, setClassData] = useState([]);
   const school = useSelector((state) => state.auth.school);
-
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     if (subject) {
       setFormData({
@@ -69,8 +70,19 @@ const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
 
     console.log("Saving subject:", newSubject);
     if (newSubject) {
-      const res = await axiosInstance.post(api+"subjects/", newSubject);
-      console.log("Subject saved:", res);
+      try {
+        debugger
+        setLoading(true);
+        const res = await axiosInstance.post(api+"subjects/", newSubject);
+        console.log("Subject updated:", res);
+        setLoading(false);
+        toast.success("Subject updated successfully!");
+      } catch (error) {
+        console.error("Error updating subject:", error);
+        toast.error("Error updating subject: " + error?.response?.data?.detail);
+        setLoading(false);
+      }
+     
 
 
     }
@@ -78,7 +90,7 @@ const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
     onSave(newSubject);
     onHide();
   };
-
+  if (loading) return <Loader />;
   return (
     <>
       <ToastContainer position="top-right" autoClose={2000} hideProgressBar />

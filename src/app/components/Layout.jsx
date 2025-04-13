@@ -3,12 +3,14 @@ import { Outlet, useLocation } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import Breadcrumbs from "./Breadcrumbs";
+import { useSelector } from "react-redux";
 
 const Layout = ({ title }) => {
     const location = useLocation();
     const [breadcrumbItems, setBreadcrumbItems] = useState([
        
       ]);
+      const school = useSelector((state) => state.auth.school);
       useEffect(() => {
         const pathSegments = location.pathname.split("/").filter((path) => path);
     
@@ -35,7 +37,11 @@ const Layout = ({ title }) => {
 
       {/* Main Content Area */}
       <main className="main-content">
+        
       <div className="breadcrumb-section">
+      <div className="text-muted small fw-semibold">
+      🏫 {school?.name}
+    </div>
           {/* Dynamic Breadcrumbs */}
           <Breadcrumbs items={breadcrumbItems} />
         </div>

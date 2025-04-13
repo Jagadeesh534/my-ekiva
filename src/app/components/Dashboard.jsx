@@ -3,13 +3,40 @@ import { useNavigate } from "react-router-dom";
 import { FaDollarSign,FaClock, FaClipboardList,FaTrophy, FaUserAlt, FaUserCheck, FaChartLine,FaChevronDown, FaChevronUp, FaBook, FaGraduationCap } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import Slider from "react-slick";
+import axiosInstance from "../axiosInstance";
+const API_BASE = "https://22c3-117-202-57-80.ngrok-free.app/api/"; // Use your real API
 const Dashboard = () => {
   const navigate = useNavigate();
   const loginType = useSelector((state)=> state.auth.loginType);
   const [cards, setCards] = useState([]);
   const userInfo = useSelector((state)=> state.auth.userInfo);
-  const schoolStats = useSelector((state)=> state.auth.schoolStats);
   const school = useSelector((state)=> state.auth.school);
+  const [schoolStats, setSchoolStats] = useState([]);
+  const cardDataAdmin = [];
+  const cardDataStudent = [
+    {
+      title: "DeskTime",
+      icon: <FaClock className="icon-style" />,
+      metric: "12 Hrs",
+      footer: 'Today',
+      path: "/dashboard/desktime",
+    },
+    {
+      title: "Rewards",
+      icon: <FaTrophy className="icon-style" />,
+      metric: "5+ Rewards",
+      footer: "Today",
+      path: "/dashboard/rewards",
+    },
+    {
+      title: "Progress",
+      icon: <FaChartLine className="icon-style" />,
+      metric: "1,245",
+      footer: "Total Enrolled",
+      path: "/dashboard/students",
+    }
+  ];
+
   const settings = {
     dots: true,
     infinite: true,
@@ -61,64 +88,53 @@ const Dashboard = () => {
   const [showAll, setShowAll] = useState(false);
   const visibleSubjects = showAll ? allSubjects : allSubjects.slice(0, 4);
   useEffect(()=>{
-    const cardDataAdmin = [
-      {
-        title: "Content Review",
-        icon: <FaClipboardList className="icon-style" />,
-        metric: schoolStats?.pending_reviews +" Pending",
-        footer: "Today",
-        path: "/dashboard/contents",
-      },
-      {
-        title: "Class Directory",
-        icon: <FaGraduationCap className="icon-style" />,
-        metric: schoolStats?.total_students,
-        footer: "Classes",
-        path: "/dashboard/class",
-      },
-      {
-        title: "Teacher Directory",
-        icon: <FaUserCheck className="icon-style" />,
-        metric: schoolStats?.total_teachers,
-        footer: "Attendance Rate",
-        path: "/dashboard/teachers",
-      },
-      {
-        title: "Subject Directory",
-        icon: <FaBook className="icon-style" />,
-        metric: schoolStats?.total_subjects,
-        footer: "Subjects",
-        path: "/dashboard/subjects",
+    const fetchSchoolStats = async () => {
+      try {
+        const response = await axiosInstance.get(API_BASE + "school_stats?school_id=" + school.id);
+        console.log("Fetched school stats data:", response);
+        setSchoolStats(response.data.school_stats);
+        const cardDataAdmin = [
+          {
+            title: "Content Review",
+            icon: <FaClipboardList className="icon-style" />,
+            metric: response.data.school_stats?.pending_reviews +" Pending",
+            footer: "Today",
+            path: "/dashboard/contents",
+          },
+          {
+            title: "Class Directory",
+            icon: <FaGraduationCap className="icon-style" />,
+            metric: response.data.school_stats?.total_students,
+            footer: "Students",
+            path: "/dashboard/class",
+          },
+          {
+            title: "Teacher Directory",
+            icon: <FaUserCheck className="icon-style" />,
+            metric: response.data.school_stats?.total_teachers,
+            footer: "Attendance Rate",
+            path: "/dashboard/teachers",
+          },
+          {
+            title: "Subject Directory",
+            icon: <FaBook className="icon-style" />,
+            metric: response.data.school_stats?.total_subjects,
+            footer: "Subjects",
+            path: "/dashboard/subjects",
+          }
+        ];
+        if(loginType === 'school') {
+          setCards(cardDataAdmin);
+        } else if(loginType === 'student') {
+          setCards(cardDataStudent)
+        }
+      } catch (error) {
+        console.error("Error fetching school stats data:", error);
       }
-    ];
-    const cardDataStudent = [
-      {
-        title: "DeskTime",
-        icon: <FaClock className="icon-style" />,
-        metric: "12 Hrs",
-        footer: 'Today',
-        path: "/dashboard/desktime",
-      },
-      {
-        title: "Rewards",
-        icon: <FaTrophy className="icon-style" />,
-        metric: "5+ Rewards",
-        footer: "Today",
-        path: "/dashboard/rewards",
-      },
-      {
-        title: "Progress",
-        icon: <FaChartLine className="icon-style" />,
-        metric: "1,245",
-        footer: "Total Enrolled",
-        path: "/dashboard/students",
-      }
-    ];
-    if(loginType === 'school') {
-      setCards(cardDataAdmin);
-    } else if(loginType === 'student') {
-      setCards(cardDataStudent)
-    }
+    };
+
+    fetchSchoolStats();
+   
   },[loginType])
 
  

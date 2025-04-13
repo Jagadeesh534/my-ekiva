@@ -1,17 +1,17 @@
-// components/school/Classes/ClassFormModal.jsx
 import React, { useState } from "react";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../axiosInstance";
+import Loader from "../../Loader";
 
-const API_BASE = "https://040f-117-213-190-162.ngrok-free.app/"; // Use your real API
+const API_BASE = "https://22c3-117-202-57-80.ngrok-free.app/"; // Use your real API
 
 const ClassFormModal = ({ show, onHide, onSaved }) => {
   const [name, setName] = useState("");
   const [grade, setGrade] = useState("");
   const [sections, setSections] = useState([{ name: "" }]);
-
+  const [loading, setLoading] = useState(false);
   const schoolId = useSelector((state) => state.auth.school.id);
 
   const resetForm = () => {
@@ -65,8 +65,22 @@ const ClassFormModal = ({ show, onHide, onSaved }) => {
 
     try {
       console.log("Submitting:", payload);
-      await axiosInstance.post(`${API_BASE}api/classrooms/`, payload);
-      toast.success("Class created successfully! ✅");
+      try {
+        setLoading(true);
+        const response = await axiosInstance.post(`${API_BASE}api/classrooms/`, payload);
+        console.log("Response from server:", response);
+        if (response.status === 200) {
+          console.log("Classrooms fetched successfully");
+        } else {
+          toast.error("Failed to fetch classrooms ❌");
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching classrooms:", error);
+        toast.error("Failed to fetch classrooms ❌");
+        setLoading(false);
+        return;
+      }
       onSaved();
       resetForm();
       onHide();
@@ -75,7 +89,7 @@ const ClassFormModal = ({ show, onHide, onSaved }) => {
       toast.error("Failed to create class ❌");
     }
   };
-
+  if (loading) return <Loader />;
   return (
     <Modal show={show} onHide={onHide} centered size="lg">
       <Modal.Header closeButton>

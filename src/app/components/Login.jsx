@@ -6,13 +6,13 @@ import { loginSuccess, updateUserInfo } from "../features/authSlice";
 import ekivaLogo from "/src/assets/ekiva-logo.svg";
 import Loader from "./Loader";
 import axiosInstance from "../axiosInstance";
-
-const API_BASE = 'https://22c3-117-202-57-80.ngrok-free.app/api';
+import { toast, ToastContainer } from "react-toastify";
+const API_BASE = "https://22c3-117-202-57-80.ngrok-free.app/api";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [response,setResponse] = useState(null)
+  const [response, setResponse] = useState(null);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -36,37 +36,33 @@ function Login() {
     }
 
     setErrors({});
+
+    setLoading(true);
     try {
-      setLoading(true);
-      try {
-        const res= await axiosInstance.post(`${API_BASE}/tokens/`, {
-          email: username,
-          password: password,
-        });
-        setResponse(res.data);
-        debugger
-      dispatch(loginSuccess({
-        loginType: "school",
-        user: res.data.user,
-        token: res.data.access,
-        menus: [],
-        schoolStats: res.data.school_stats,
-        school: res.data.school,
-      }));
+      const res = await axiosInstance.post(`${API_BASE}/tokens/`, {
+        email: username,
+        password: password,
+      });
+      setResponse(res.data);
+      debugger;
+      dispatch(
+        loginSuccess({
+          user: res.data.user,
+          token: res.data.access,
+          menus: [],
+          school: res.data.school,
+        })
+      );
       localStorage.setItem("access_token", res.data.access);
       setLoading(false);
       navigate("/dashboard");
-        console.log("Login successful", response);
-      } catch (error) {
-        setLoading(false)
-        console.error("Login failed", error);
-      }
-      
+      console.log("Login successful", response);
+      toast.success("Login successful");
     } catch (error) {
-      console.error("Login failed:", error);
       setErrors({ password: "Invalid username or password" });
       setLoading(false);
-      navigate("/dashboard");
+      toast.error("Error while login : " + error?.response?.data?.detail);
+      console.error("Error during login:", error);
     }
   };
 
@@ -77,12 +73,16 @@ function Login() {
       {/* Header Section with Wave */}
       <header className="wave-header">
         <div className="header-content">
-        <img src={ekivaLogo} alt="logo" width={100} />
+          <img src={ekivaLogo} alt="logo" width={100} />
           <h1 className="title">My Ekiva</h1>
           <p className="subtitle">Teachers, AI, a New Journey</p>
         </div>
         <div className="wave">
-          <svg viewBox="0 0 1440 320" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            viewBox="0 0 1440 320"
+            preserveAspectRatio="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             <path
               fill="#eaecef"
               d="M0,160L30,165.3C60,171,120,181,180,192C240,203,300,213,360,202.7C420,192,480,160,540,160C600,160,660,192,720,208C780,224,840,224,900,224C960,224,1020,224,1080,202.7C1140,181,1200,139,1260,144C1320,149,1380,203,1410,229.3L1440,256L1440,320L1410,320C1380,320,1320,320,1260,320C1200,320,1140,320,1080,320C1020,320,960,320,900,320C840,320,780,320,720,320C660,320,600,320,540,320C480,320,420,320,360,320C300,320,240,320,180,320C120,320,60,320,30,320L0,320Z"

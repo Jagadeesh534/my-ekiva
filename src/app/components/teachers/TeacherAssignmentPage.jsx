@@ -2,38 +2,9 @@ import React, { useEffect, useState } from "react";
 import { Button, Card, Form, Modal, Table } from "react-bootstrap";
 import { toast } from "react-toastify";
 import axiosInstance from "../../axiosInstance";
+import { useNavigate } from "react-router-dom";
+import Loader  from "../../components/Loader";
 
-
-
-const sectionsData = {
-  "Class 7": [
-    { id: 1, name: "A" },
-    { id: 2, name: "B" },
-    { id: 3, name: "C" },
-  ],
-  "Class 8": [
-    { id: 4, name: "A" },
-    { id: 5, name: "B" },
-    { id: 6, name: "C" },
-  ],
-  "Class 6": [
-    { id: 7, name: "A" },
-    { id: 8, name: "B" },
-  ],
-  "Class 9": [
-    { id: 9, name: "A" },
-    { id: 10, name: "B" },
-  ],
-  "Class 5": [
-    { id: 11, name: "A" },
-    { id: 12, name: "B" },
-    { id: 13, name: "C" },
-  ],
-  "Class 10": [
-    { id: 14, name: "A" },
-    { id: 15, name: "B" },
-  ],
-};
 const api = "https://22c3-117-202-57-80.ngrok-free.app/api/";
 const TeacherAssignmentPage = () => {
   const [teacherInfo, setTeacherInfo] = useState({
@@ -56,23 +27,30 @@ const TeacherAssignmentPage = () => {
   const [selectedSubject, setSelectedSubject] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
   const [selectedSections, setSelectedSections] = useState([]);
-
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
  useEffect(() => {
     const fetchSubjects = async () => {
       try {
+        setLoading(true);
         const response = await axiosInstance.get(api + "subjects/");
         setAllSubjects(response.data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching subjects:", error);
+        setLoading(false);
       }
     };
     const fetchClasses = async () => {
       try {
+        setLoading(true);
         const response = await axiosInstance.get(api + "classrooms/");
         setAllClasses(response.data);
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching classes:", error);
+        setLoading(false);
       }
     };
     fetchSubjects();
@@ -146,11 +124,19 @@ const TeacherAssignmentPage = () => {
     };
 
     console.log("Final Payload:", finalData);
-    const saveResponse = await axiosInstance.post(api+'teachers/', finalData);
-    if (saveResponse.status !== 200) {
-    toast.success("Teacher info & assignments saved ✅");
-    } else {
-      toast.error("Failed to save assignments ❌");
+    try {
+      setLoading(true);
+      const response = await axiosInstance.post(api + "teachers/", finalData);
+      setLoading(false);
+      if (response.status === 201) {
+        toast.success("Teacher info & assignments saved ✅");
+      } else {
+        toast.error("Failed to save assignments ❌");
+      }
+    } catch (error) {
+      setLoading(false);
+      toast.error("Error while saving assignments ❌");
+      console.error("Error during save:", error);
     }
   };
 
@@ -202,7 +188,7 @@ const TeacherAssignmentPage = () => {
         : [...prev, section]
     );
   };
-
+  if (loading) return <Loader />;
   return (
     <div className="container bg-white p-4 rounded-4 shadow-sm mt-4">
       <div className="d-flex justify-content-between align-items-center mb-4">

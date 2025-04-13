@@ -1,22 +1,22 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { deleteStudent, selectedStudnet } from "../../features/studentSlice";
 import { useNavigate } from "react-router-dom";
 import { Button } from "react-bootstrap";
 
-const StudentGrid = ({students}) => {
+const StudentGrid = ({ students }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+
+  const selectedClass = useSelector((state) => state.student.selectedClassObj);
   const studentsPerPage = 10;
 
-  // Filtered Students
   const filteredStudents = students.filter((student) =>
     student.user.first_name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Get Current Page Data
   const indexOfLastStudent = currentPage * studentsPerPage;
   const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
   const currentStudents = filteredStudents.slice(
@@ -24,10 +24,8 @@ const StudentGrid = ({students}) => {
     indexOfLastStudent
   );
 
-  // Pagination
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-  // Handle Delete Student
   const handleDelete = (id) => {
     if (window.confirm("Are you sure you want to delete this student?")) {
       dispatch(deleteStudent(id));
@@ -36,18 +34,31 @@ const StudentGrid = ({students}) => {
 
   return (
     <div className="grid-container">
-      {/* Search Bar */}
-      <div className="search-container justify-content-around">
-        <input
-          type="text"
-          className="search-input"
-          placeholder="Search student by name..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <Button onClick={() => navigate(`/dashboard/class/students/register`)}>
-          + Add Student
-        </Button>
+      {/* Top Bar: Class Info + Search + Add */}
+      <div className="row align-items-center mb-4 g-2">
+        <div className="col-md-3">
+          <h5 className="text-muted">
+            📘 Class: <strong>Class {selectedClass.className}</strong>, Section <strong>{selectedClass.section.name}</strong>
+          </h5>
+        </div>
+
+        <div className="col-md-6">
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search student by name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
+
+        <div className="col-md-3 text-end">
+          <Button
+            onClick={() => navigate(`/dashboard/class/students/register`)}
+          >
+            + Add Student
+          </Button>
+        </div>
       </div>
 
       {/* Student Cards */}
@@ -58,14 +69,15 @@ const StudentGrid = ({students}) => {
           currentStudents.map((student) => (
             <div className="student-card" key={student.id}>
               <img
-                src={student.avatar}
-                alt={student.name}
+                src={`https://ui-avatars.com/api/?name=${student.user.first_name}+${student.user.last_name}&background=0D8ABC&color=fff&bold=true`}
+                alt={`${student.user.first_name} ${student.user.last_name}`}
                 className="student-avatar"
               />
-              <h4 className="student-name">{student.name}</h4>
-              <p className="student-roll">🎓 Roll No: {student.rollNumber}</p>
-
-              <p className="student-class">{student.className}</p>
+              <h4 className="student-name">
+                {student.user.first_name} {student.user.last_name}
+              </h4>
+              <p className="student-roll">🎓 Roll No: {student.roll_number}</p>
+              <p className="student-class">{student?.className}</p>
               <p
                 className={`student-status ${
                   student.status === "Active" ? "text-success" : "text-danger"
@@ -74,7 +86,7 @@ const StudentGrid = ({students}) => {
                 {student.status}
               </p>
 
-              {/* View, Edit & Delete Buttons */}
+              {/* Actions */}
               <div className="card-actions">
                 <button
                   className="btn btn-outline-primary me-2"
@@ -107,7 +119,7 @@ const StudentGrid = ({students}) => {
       </div>
 
       {/* Pagination */}
-      <div className="pagination-container">
+      <div className="pagination-container mt-4">
         {Array.from({
           length: Math.ceil(filteredStudents.length / studentsPerPage),
         }).map((_, index) => (
@@ -125,4 +137,5 @@ const StudentGrid = ({students}) => {
     </div>
   );
 };
+
 export default StudentGrid;

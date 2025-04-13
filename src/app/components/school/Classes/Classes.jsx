@@ -8,17 +8,18 @@ import {
   FaPlus,
 } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import ClassFormModal from "./ClassFormModal"; // 👈 Import the modal
+import ClassFormModal from "./ClassFormModal";
 import axiosInstance from "../../../axiosInstance";
 import { useDispatch } from "react-redux";
 import { setSelectedClassObj } from "../../../features/studentSlice";
 
 const api = "https://22c3-117-202-57-80.ngrok-free.app/api/classrooms/";
+
 const Classes = () => {
   const [expandedClassIds, setExpandedClassIds] = useState([]);
   const [showModal, setShowModal] = useState(false);
-  const navigate = useNavigate();
   const [classData, setClassData] = useState([]);
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const toggleExpand = (id) => {
@@ -27,23 +28,19 @@ const Classes = () => {
     );
   };
 
-  const handleSectionClick = (classId, section) => {
-    console.log("Class ID:", classId);
-    console.log("Section:", section);
-    dispatch(setSelectedClassObj({section: section, classId: classId}));
+  const handleSectionClick = (cls, section) => {
+    dispatch(setSelectedClassObj({ section: section, classId: cls.id,className: cls.name }));
     navigate(`/dashboard/class/students`);
-    
   };
 
   const handleClassSaved = () => {
-    // TODO: refetch or refresh class data from API
-    console.log("Class saved!");
+    // Will re-fetch when modal is closed
   };
+
   useEffect(() => {
     const fetchClassData = async () => {
       try {
         const response = await axiosInstance.get(api);
-        console.log("Fetched class data:", response);
         setClassData(response.data);
       } catch (error) {
         console.error("Error fetching class data:", error);
@@ -68,11 +65,14 @@ const Classes = () => {
           <div key={cls.id} className="col-md-4">
             <Card className="shadow rounded-4">
               <Card.Body>
-                <div className="d-flex justify-content-between align-items-center">
-                  <h5>
+                <div className="d-flex justify-content-between align-items-center mb-2">
+                  <h5 className="mb-0 d-flex align-items-center">
                     <FaChalkboard className="me-2 text-primary" />
                     {cls.name}
                   </h5>
+                  <span className="badge bg-primary rounded-pill">
+                    {cls.student_count} Students
+                  </span>
                   <Button
                     variant="outline-secondary"
                     size="sm"
@@ -93,17 +93,27 @@ const Classes = () => {
                       Sections
                     </h6>
                     <ul className="list-group list-group-flush">
-                      {cls.sections.map((sec, index) => (
-                        <li
-                          key={index}
-                          className="list-group-item text-primary fw-medium"
-                          style={{ cursor: "pointer" }}
-                          onClick={() => handleSectionClick(cls.id, sec)}
-                        >
-                          Section {sec.name}
+                      {cls.sections.length > 0 ? (
+                        cls.sections.map((sec, index) => (
+                          <li
+                            key={index}
+                            className="list-group-item d-flex justify-content-between align-items-center text-primary fw-medium"
+                            style={{ cursor: "pointer" }}
+                            onClick={() => handleSectionClick(cls, sec)}
+                          >
+                            <span>Section {sec.name}</span>
+                            {sec.student_count !== undefined && (
+                              <span className="badge bg-info rounded-pill">
+                                {sec.student_count}
+                              </span>
+                            )}
+                          </li>
+                        ))
+                      ) : (
+                        <li className="list-group-item text-muted">
+                          No Sections
                         </li>
-                      ))}
-                      {cls.sections.length === 0 && (<p>No Sections </p>)}
+                      )}
                     </ul>
                   </div>
                 </Collapse>

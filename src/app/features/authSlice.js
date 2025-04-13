@@ -17,12 +17,11 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     loginSuccess: (state, action) => {
-      state.loginType = action.payload.loginType;
+      state.loginType = action.payload.user.user_type;
       state.userInfo = action.payload.user || null;
       state.menus = action.payload.menus || [];
       state.isAuthenticated = true;
       state.profilePath = `/dashboard/profile-${state.loginType}`;
-      state.schoolStats = action.payload.schoolStats;
       state.school = action.payload.school;
 
       if (token) {

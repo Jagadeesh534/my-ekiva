@@ -3,6 +3,9 @@ import { Container, Form, Button, Card, Row, Col } from "react-bootstrap";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../axiosInstance";
+import { toast, ToastContainer } from "react-toastify";
+import Loader from "../Loader";
+
 const api  = 'https://22c3-117-202-57-80.ngrok-free.app/api/';
 const StudentRegister = () => {
   const navigate = useNavigate();
@@ -51,14 +54,21 @@ const StudentRegister = () => {
     };
 
     console.log("🎓 Final Student Registration Payload:", payload);
-    const response = await axiosInstance.post(`${api}students/`, payload);
-    console.log("Response from server:", response);
-    if (response.status === 201) {
-      alert("Student registered successfully!");
+    try {
+      const response = await axiosInstance.post(`${api}students/`, payload);
+      console.log("Response from server:", response);
+      if (response.status === 201) {
+        toast.success("Student registered successfully!");
+        navigate("/dashboard/students");
+      } else {
+        toast.error("Failed to register student.");
+      }
+    } catch (error) {
+      console.error("Error during student registration:", error);
+      toast.error("Error during registration: " + error?.response?.data?.user?.email[0]);
     }
-    navigate("/dashboard/students");
   };
-
+  if (loading) return <Loader />;
   return (
     <Container className="mt-4">
       <Row className="justify-content-center">
