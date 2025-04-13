@@ -4,11 +4,11 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../axiosInstance";
 import { toast, ToastContainer } from "react-toastify";
-import Loader from "../Loader";
-
+import Loader from '../Loader';
 const api  = 'https://22c3-117-202-57-80.ngrok-free.app/api/';
 const StudentRegister = () => {
   const navigate = useNavigate();
+  const [loading,setLoading] = useState(false);
   const selectedClass = useSelector((s)=> s.student.selectedClassObj);
   const [formData, setFormData] = useState({
     first_name: "",
@@ -39,7 +39,7 @@ const StudentRegister = () => {
         first_name: formData.first_name,
         last_name: formData.last_name,
         email: formData.email,
-        username: formData.first_name,
+        username: formData.email,
         phone_number: formData.phone_number,
       },
       school: 1,
@@ -68,7 +68,7 @@ const StudentRegister = () => {
       toast.error("Error during registration: " + error?.response?.data?.user?.email[0]);
     }
   };
-  if (loading) return <Loader />;
+  if (loading) return < Loader/>;
   return (
     <Container className="mt-4">
       <Row className="justify-content-center">
@@ -125,7 +125,8 @@ const StudentRegister = () => {
                     <Form.Control
                       type="text"
                       name="username"
-                      value={formData.username}
+                      value={formData.email}
+                      readOnly
                       onChange={handleChange}
                       placeholder="Username (usually same as email)"
                       required

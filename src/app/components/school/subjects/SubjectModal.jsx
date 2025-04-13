@@ -1,60 +1,59 @@
 import React, { useEffect, useState } from "react";
-import { use } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import Select from "react-select";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import axiosInstance from "../../../axiosInstance";
 import { useSelector } from "react-redux";
 import Loader from "../../Loader";
-const api = "https://22c3-117-202-57-80.ngrok-free.app/api/";
 
+const api = "https://22c3-117-202-57-80.ngrok-free.app/api/";
 
 const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
   const [formData, setFormData] = useState({ name: "", classrooms: [] });
   const [errors, setErrors] = useState({});
   const [classData, setClassData] = useState([]);
-  const school = useSelector((state) => state.auth.school);
   const [loading, setLoading] = useState(false);
+  const [disableModalClose, setDisableModalClose] = useState(false);
+
+  const school = useSelector((state) => state.auth.school);
+
   useEffect(() => {
     if (subject) {
       setFormData({
         name: subject.name || "",
         classrooms:
           subject.classrooms?.map((c) => ({
-            value: c.name,
-            label: c.name,
+            value: c.id || c.value,
+            label: c.name || c.label,
           })) || [],
       });
     } else {
       setFormData({ name: "", classrooms: [] });
     }
     setErrors({});
-    
   }, [subject]);
 
   useEffect(() => {
     const fetchClassData = async () => {
       try {
-        const response = await axiosInstance.get(api+"classrooms/");
-        console.log("Fetched class data:", response);
-        const classOptions = response.data.map((c) => ({
+        const response = await axiosInstance.get(`${api}classrooms/`);
+        const options = response.data.map((c) => ({
           value: c.id,
           label: c.name,
         }));
-        setClassData(classOptions);
+        setClassData(options);
       } catch (error) {
-        console.error("Error fetching class data:", error);
+        toast.error("Failed to fetch classes.");
       }
     };
-
     fetchClassData();
-  },[]);
+  }, []);
 
   const validate = () => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = "Subject name is required";
-    if (formData.classrooms.length === 0) newErrors.classes = "At least one class must be selected";
+    if (formData.classrooms.length === 0)
+      newErrors.classes = "At least one class must be selected";
     return newErrors;
   };
 
@@ -65,91 +64,104 @@ const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
       return;
     }
 
-    const selectedClasses = formData.classrooms.map((c) => c.value);
-    const newSubject = { name: formData.name, classrooms: selectedClasses, school: school.id };
+    const selectedClassIds = formData.classrooms.map((c) => c.value);
+    const payload = {
+      name: formData.name,
+      classrooms: selectedClassIds,
+      school: school.id,
+    };
 
-    console.log("Saving subject:", newSubject);
-    if (newSubject) {
-      try {
-        debugger
-        setLoading(true);
-        const res = await axiosInstance.post(api+"subjects/", newSubject);
-        console.log("Subject updated:", res);
-        setLoading(false);
-        toast.success("Subject updated successfully!");
-      } catch (error) {
-        console.error("Error updating subject:", error);
-        toast.error("Error updating subject: " + error?.response?.data?.detail);
-        setLoading(false);
-      }
-     
+    try {
+      setLoading(true);
+      setDisableModalClose(true); // Prevent premature closing
+      await axiosInstance.post(`${api}subjects/`, payload);
+      setLoading(false);
+      toast.success("Subject created successfully ✅", {
+        autoClose: 2000,
+        onClose: () => {
+          setDisableModalClose(false);
+          if (onSave) onSave(payload);
+          if (onHide) onHide();
+        },
+      });
+    } catch (error) {
+      setLoading(false);
+      setDisableModalClose(false);
+      const errorMsg =
+        error.response?.data?.detail ||
+        error.response?.data?.name?.[0] ||
+        error.response?.data?.classrooms?.[0] ||
+        "Failed to save subject ❌";
 
-
+      toast.error(errorMsg, {
+        autoClose: 2500,
+      });
     }
-    toast.success(subject ? "Subject updated successfully!" : "Subject added successfully!");
-    onSave(newSubject);
-    onHide();
   };
+
   if (loading) return <Loader />;
+
   return (
-    <>
-      <ToastContainer position="top-right" autoClose={2000} hideProgressBar />
-      <Modal show={show} onHide={onHide} centered>
-        <Modal.Header closeButton>
-          <Modal.Title>{subject ? "Edit Subject" : "Add Subject"}</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            {/* Subject Name */}
-            <Form.Group controlId="subjectName" className="mb-3">
-              <Form.Label>Subject Name</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Enter subject name"
-                value={formData.name}
-                onChange={(e) => {
-                  setFormData({ ...formData, name: e.target.value });
-                  setErrors((prev) => ({ ...prev, name: "" }));
-                }}
-                isInvalid={!!errors.name}
-              />
-              <Form.Control.Feedback type="invalid">
-                {errors.name}
-              </Form.Control.Feedback>
-            </Form.Group>
+    <Modal
+      show={show}
+      onHide={() => {
+        if (!disableModalClose) onHide();
+      }}
+      backdrop={disableModalClose ? "static" : true}
+      centered
+    >
+      <Modal.Header closeButton={!disableModalClose}>
+        <Modal.Title>{subject ? "Edit Subject" : "Add Subject"}</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          <Form.Group className="mb-3">
+            <Form.Label>Subject Name</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Enter subject name"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              isInvalid={!!errors.name}
+              disabled={disableModalClose}
+            />
+            <Form.Control.Feedback type="invalid">
+              {errors.name}
+            </Form.Control.Feedback>
+          </Form.Group>
 
-            {/* Class Selection */}
-            <Form.Group controlId="classMultiSelect" className="mb-3">
-              <Form.Label>Associate Classes</Form.Label>
-              <Select
-                isMulti
-                options={classData}
-                value={formData.classrooms}
-                onChange={(selected) => {
-                  debugger
-                  setFormData({ ...formData, classrooms: selected });
-                  setErrors((prev) => ({ ...prev,classrooms: "" }));
-                }}
-                classNamePrefix="select"
-                placeholder="Select one or more classes..."
-              />
-              {errors.classes && (
-                <div className="text-danger mt-1">{errors.classes}</div>
-              )}
-            </Form.Group>
-          </Form>
-        </Modal.Body>
+          <Form.Group className="mb-3">
+            <Form.Label>Associate Classes</Form.Label>
+            <Select
+              isMulti
+              options={classData}
+              value={formData.classrooms}
+              onChange={(selected) => {
+                setFormData({ ...formData, classrooms: selected });
+                setErrors((prev) => ({ ...prev, classes: "" }));
+              }}
+              isDisabled={disableModalClose}
+              classNamePrefix="select"
+              placeholder="Select one or more classes"
+            />
+            {errors.classes && (
+              <div className="text-danger mt-1">{errors.classes}</div>
+            )}
+          </Form.Group>
+        </Form>
+      </Modal.Body>
 
-        <Modal.Footer>
-          <Button variant="secondary" onClick={onHide}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={handleSubmit}>
-            Save
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onHide} disabled={disableModalClose}>
+          Cancel
+        </Button>
+        <Button variant="primary" onClick={handleSubmit} disabled={disableModalClose}>
+          Save
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 };
 

@@ -29,8 +29,7 @@ function App() {
 
   return (
     <>
-      <ToastContainer position="top-right" autoClose={3000} />
-
+      
       <Routes>
         {/* Public Routes */}
         <Route path="/" element={<Landing />} />
@@ -102,6 +101,8 @@ function App() {
         {/* 404 Not Found */}
         <Route path="*" element={<NotFound />} />
       </Routes>
+      <ToastContainer position="top-right" autoClose={3000} />
+
     </>
   );
 }

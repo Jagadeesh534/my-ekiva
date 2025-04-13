@@ -130,6 +130,7 @@ const TeacherAssignmentPage = () => {
       setLoading(false);
       if (response.status === 201) {
         toast.success("Teacher info & assignments saved ✅");
+        navigate("/dashboard/teachers");
       } else {
         toast.error("Failed to save assignments ❌");
       }
@@ -188,6 +189,9 @@ const TeacherAssignmentPage = () => {
         : [...prev, section]
     );
   };
+  const getSectionsNames = (sections,selectedSections)=> {
+    return sections ? sections.filter((s) => selectedSections.includes(s.id)).map((s) => s.name).join(", ") : "";
+  }
   if (loading) return <Loader />;
   return (
     <div className="container bg-white p-4 rounded-4 shadow-sm mt-4">
@@ -270,8 +274,9 @@ const TeacherAssignmentPage = () => {
               assignments.map((a, idx) => (
                 <tr key={idx}>
                   <td>{a.subject}</td>
-                  <td>{a.className}</td>
-                  <td>{a.sections.join(", ")}</td>
+                  <td>{allClasses.find((c)=>c.id == a.className)?.name}</td>
+                  <td>{
+                  getSectionsNames(allClasses.find((c)=>c.id == a.className)?.sections, a.sections)}</td>
                   <td>
                     <Button size="sm" variant="outline-secondary" className="me-2" onClick={() => openModal(idx)}>Edit</Button>
                     <Button size="sm" variant="outline-danger" onClick={() => handleDelete(idx)}>Delete</Button>
