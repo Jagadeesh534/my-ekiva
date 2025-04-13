@@ -109,21 +109,21 @@ const Dashboard = () => {
             path: "/dashboard/class",
           },
           {
-            title: "Teacher Directory",
-            icon: <FaUserCheck className="icon-style" />,
-            metric: response.data.school_stats?.total_teachers,
-            footer: "Attendance Rate",
-            path: "/dashboard/teachers",
-          },
-          {
             title: "Subject Directory",
             icon: <FaBook className="icon-style" />,
             metric: response.data.school_stats?.total_subjects,
             footer: "Subjects",
             path: "/dashboard/subjects",
+          },
+          {
+            title: "Teacher Directory",
+            icon: <FaUserCheck className="icon-style" />,
+            metric: response.data.school_stats?.total_teachers,
+            footer: "Attendance Rate",
+            path: "/dashboard/teachers",
           }
         ];
-        if(loginType === 'school') {
+        if(loginType === 'schooladmin') {
           setCards(cardDataAdmin);
         } else if(loginType === 'student') {
           setCards(cardDataStudent)
