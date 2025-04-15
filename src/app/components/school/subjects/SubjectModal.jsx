@@ -9,7 +9,7 @@ import Loader from "../../Loader";
 const api = "https://22c3-117-202-57-80.ngrok-free.app/api/";
 
 const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
-  const [formData, setFormData] = useState({ name: "", classrooms: [] });
+  const [formData, setFormData] = useState({ name: "", classroom_ids: [],id:null });
   const [errors, setErrors] = useState({});
   const [classData, setClassData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -17,22 +17,7 @@ const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
 
   const school = useSelector((state) => state.auth.school);
 
-  useEffect(() => {
-    if (subject) {
-      setFormData({
-        name: subject.name || "",
-        classrooms:
-          subject.classrooms?.map((c) => ({
-            value: c.id || c.value,
-            label: c.name || c.label,
-          })) || [],
-      });
-    } else {
-      setFormData({ name: "", classrooms: [] });
-    }
-    setErrors({});
-  }, [subject]);
-
+  
   useEffect(() => {
     const fetchClassData = async () => {
       try {
@@ -42,17 +27,44 @@ const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
           label: c.name,
         }));
         setClassData(options);
+       debugger
+          if (subject) {
+            try {
+              setLoading(true);
+              const response = await axiosInstance.get(`${api}subjects/${subject.id}/`);
+              const subjectData = response.data;
+              console.log(subjectData);
+              setFormData({
+                id: subjectData.id,
+                name: subjectData.name || "",
+                classroom_ids:
+                  subjectData.classrooms,
+              });
+              console.log(formData);
+              setLoading(false);
+            } catch (error) {
+              setLoading(false);
+              toast.error("Failed to fetch subject data.");
+              console.log(error);
+            }
+          } else {
+            setFormData({ name: "", s: [] });
+          }
+        
       } catch (error) {
         toast.error("Failed to fetch classes.");
       }
     };
     fetchClassData();
-  }, []);
+  },[]);
+  
+
+ 
 
   const validate = () => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = "Subject name is required";
-    if (formData.classrooms.length === 0)
+    if (formData.classroom_ids.length === 0)
       newErrors.classes = "At least one class must be selected";
     return newErrors;
   };
@@ -64,17 +76,19 @@ const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
       return;
     }
 
-    const selectedClassIds = formData.classrooms.map((c) => c.value);
+    const selectedClassIds = formData.classroom_ids.map((c) => c.value);
     const payload = {
       name: formData.name,
-      classrooms: selectedClassIds,
+      classroom_ids: selectedClassIds,
       school: school.id,
+      id: formData.id,
     };
 
     try {
       setLoading(true);
-      setDisableModalClose(true); // Prevent premature closing
-      await axiosInstance.post(`${api}subjects/`, payload);
+      setDisableModalClose(true);
+        await axiosInstance.post(`${api}subjects/`, payload);
+    
       setLoading(false);
       toast.success("Subject created successfully ✅", {
         autoClose: 2000,
@@ -90,7 +104,7 @@ const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
       const errorMsg =
         error.response?.data?.detail ||
         error.response?.data?.name?.[0] ||
-        error.response?.data?.classrooms?.[0] ||
+        error.response?.data?.s?.[0] ||
         "Failed to save subject ❌";
 
       toast.error(errorMsg, {
@@ -137,9 +151,9 @@ const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
             <Select
               isMulti
               options={classData}
-              value={formData.classrooms}
+              value={formData.classroom_ids}
               onChange={(selected) => {
-                setFormData({ ...formData, classrooms: selected });
+                setFormData({ ...formData, classroom_ids: selected });
                 setErrors((prev) => ({ ...prev, classes: "" }));
               }}
               isDisabled={disableModalClose}

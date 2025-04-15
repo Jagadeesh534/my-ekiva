@@ -57,7 +57,7 @@ if (loading) return <Loader />;
                 <Button
                   variant="outline-secondary"
                   size="sm"
-                  onClick={() => navigate("/dashboard/teachers/assign")}
+                  onClick={() => navigate("/dashboard/teachers/assign/" + teacher.user.id)}
                 >
                   Edit / Assign Subjects
                 </Button>

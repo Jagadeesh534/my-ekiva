@@ -88,6 +88,10 @@ function App() {
               path="assign"
               element={<TeacherAssignmentPage title="Assign Teacher" />}
             />
+            <Route
+              path="assign/:teacherId"
+              element={<TeacherAssignmentPage title="Assign Teacher" />}
+            />
           </Route>
 
           {/* Profile & Smart Classroom */}

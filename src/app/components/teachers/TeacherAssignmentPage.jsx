@@ -2,11 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Button, Card, Form, Modal, Table } from "react-bootstrap";
 import { toast } from "react-toastify";
 import axiosInstance from "../../axiosInstance";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Loader  from "../../components/Loader";
 
 const api = "https://22c3-117-202-57-80.ngrok-free.app/api/";
 const TeacherAssignmentPage = () => {
+  const [teacherId, setTeacherId] = useState(null);
+  const param = useParams();
+
   const [teacherInfo, setTeacherInfo] = useState({
     id: null,
     first_name: '',
@@ -55,6 +58,22 @@ const TeacherAssignmentPage = () => {
     };
     fetchSubjects();
     fetchClasses();
+    setTeacherId(param.teacherId);
+    if(teacherId!=null){
+      const fetchTeacher = async () => {
+        try {
+          setLoading(true);
+          const response = await axiosInstance.get(api + `teachers/${teacherId}/`);
+          setTeacherInfo(response.data.user);
+          setAssignments(response.data.assignments);
+          setLoading(false);
+        } catch (error) {
+          console.error("Error fetching teacher data:", error);
+          setLoading(false);
+        }
+      };
+      fetchTeacher();
+    }
   },[]);
   
 

@@ -13,8 +13,8 @@ const SubjectCard = ({ subject, onEdit }) => {
 
         <p className="mb-2">
           <strong>Classes:</strong>{" "}
-          {subject.classroom_names?.length
-            ? subject.classroom_names.map((c) => c).join(", ")
+          {subject.classrooms?.length
+            ? subject.classrooms.map((c) => c.label).join(", ")
             : "None Assigned"}
         </p>
 
