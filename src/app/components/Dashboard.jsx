@@ -4,7 +4,7 @@ import { FaDollarSign,FaClock, FaClipboardList,FaTrophy, FaUserAlt, FaUserCheck,
 import { useSelector } from "react-redux";
 import Slider from "react-slick";
 import axiosInstance from "../axiosInstance";
-const API_BASE = "https://22c3-117-202-57-80.ngrok-free.app/api/"; // Use your real API
+const API_BASE = "https://92de-2409-40f0-11cd-308d-b6f5-64dd-bd65-3bb6.ngrok-free.app/api/"; // Use your real API
 const Dashboard = () => {
   const navigate = useNavigate();
   const loginType = useSelector((state)=> state.auth.loginType);

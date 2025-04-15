@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import axiosInstance from "../../../axiosInstance";
 import Loader from "../../Loader";
 
-const API_BASE = "https://22c3-117-202-57-80.ngrok-free.app/"; // Use your real API
+const API_BASE = "https://92de-2409-40f0-11cd-308d-b6f5-64dd-bd65-3bb6.ngrok-free.app/"; // Use your real API
 
 const ClassFormModal = ({ show, onHide, onSaved }) => {
   const [name, setName] = useState("");
