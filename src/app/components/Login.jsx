@@ -61,7 +61,7 @@ function Login() {
     } catch (error) {
       setErrors({ password: "Invalid username or password" });
       setLoading(false);
-      toast.error("Error while login : " + error?.response?.data?.detail);
+      toast.error("Error while login : " + error?.message);
       console.error("Error during login:", error);
     }
   };

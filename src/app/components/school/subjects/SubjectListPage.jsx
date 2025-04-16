@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Button } from "react-bootstrap";
 import SubjectFormModal from "./SubjectModal";
 import SubjectCard from "./SubjectCard";
@@ -15,23 +15,24 @@ const SubjectListPage = () => {
   const [loading, setLoading] = useState(false);
   const school = useSelector((state) => state.auth.school);
 
-  const fetchSubjects = async () => {
+  // Stable function using useCallback to avoid refetching due to re-renders
+  const fetchSubjects = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(
         `${API_BASE}/subjects?school_id=${school.id}`
       );
       setSubjects(response.data);
-      setLoading(false);
     } catch (error) {
-      console.log(error);
+      console.error("Error fetching subjects:", error);
+    } finally {
       setLoading(false);
     }
-  };
+  }, [school.id]);
 
   useEffect(() => {
-    fetchSubjects();
-  }, []);
+    fetchSubjects(); // Will run only once
+  }, [fetchSubjects]);
 
   const handleEdit = (subject) => {
     setSelectedSubject(subject);
@@ -51,19 +52,27 @@ const SubjectListPage = () => {
         <h3>Subjects</h3>
         <Button onClick={() => setShowModal(true)}>+ Add Subject</Button>
       </div>
+
       <div className="row g-4">
-        {subjects.map((subject) => (
-          <div className="col-md-4" key={subject.id}>
-            <SubjectCard subject={subject} onEdit={() => handleEdit(subject)} />
-          </div>
-        ))}
+        {subjects.length === 0 ? (
+          <p className="text-muted">No subjects available.</p>
+        ) : (
+          subjects.map((subject) => (
+            <div className="col-md-4" key={subject.id}>
+              <SubjectCard
+                subject={subject}
+                onEdit={() => handleEdit(subject)}
+              />
+            </div>
+          ))
+        )}
       </div>
 
       {showModal && (
         <SubjectFormModal
           show={showModal}
           onHide={handleModalClose}
-          onSave={fetchSubjects}
+          onSave={fetchSubjects} // Triggers refresh after save
           subject={selectedSubject}
         />
       )}

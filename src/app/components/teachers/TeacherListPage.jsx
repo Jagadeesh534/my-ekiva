@@ -49,6 +49,9 @@ if (loading) return <Loader />;
                   {teacher.user.first_name} {teacher.user.last_name}
                 </h5>
                 <p className="mb-1">
+                  <strong>Subjects:</strong> {teacher.subjects.map((subject) => subject.name).join(", ")}
+                </p>
+                <p className="mb-1">
                   <strong>Email:</strong> {teacher.user.email}
                 </p>
                 <p className="mb-1">

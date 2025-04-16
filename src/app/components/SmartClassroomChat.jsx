@@ -1,145 +1,183 @@
-import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-import { FaPaperclip } from "react-icons/fa";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import { Form, Button, ListGroup, Card } from "react-bootstrap";
+import axiosInstance from "../axiosInstance";
 
-function SmartClassroomChat({ role }) {
-  const isStudent = role === "student";
-  const isTeacher = role === "teacher";
+const WEBSOCKET_BASE = "wss://yourdomain/ws/chat"; // replace with your domain
+const API_BASE = "https://92de-2409-40f0-11cd-308d-b6f5-64dd-bd65-3bb6.ngrok-free.app/api";
 
-  const subjects = ["Science", "Maths", "English", "Social Studies"];
 
-  const teacherMap = {
-    Science: ["Spencer", "Karen"],
-    Maths: ["Anil", "Meera"],
-    English: ["Raj", "Lara"],
-    "Social Studies": ["Nina", "Jack"],
-  };
+const ChatPage = () => {
+  const loginType = useSelector((state) => state.auth.loginType); // "student" or "teacher"
+  const user = useSelector((state) => state.auth.userInfo); // Assume user has { id, name }
+  const school = useSelector((state) => state.auth.school);
 
-  const studentMap = {
-    Science: ["Shawn", "Priya"],
-    Maths: ["Ravi", "Tina"],
-    English: ["Aman", "Lily"],
-    "Social Studies": ["Dev", "Zara"],
-  };
+  const isStudent = loginType === "student";
+  const [selectedSubject, setSelectedSubject] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const [messageInput, setMessageInput] = useState("");
+  const socketRef = useRef(null);
+  const [loading,setLoading] = useState(false);
+  const [subjects,setSubjects] = useState([]);
+  const getChatroomId = (otherUserId) =>
+    [user.id, otherUserId].sort().join("-");
+  const [teachers,setTeachers] = useState([]);
 
-  const [selectedSubject, setSelectedSubject] = useState(isStudent ? "Science" : null);
-  const [chatMessages, setChatMessages] = useState({});
-  const [inputMessage, setInputMessage] = useState("");
-  const [attachment, setAttachment] = useState(null);
+  useEffect(() => {
+    if (selectedUser) {
+      const chatroomId = getChatroomId(selectedUser.id);
+      socketRef.current = new WebSocket(`${WEBSOCKET_BASE}/${chatroomId}/`);
+
+      socketRef.current.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        setMessages((prev) => [...prev, data]);
+      };
+
+      socketRef.current.onclose = () => console.log("WebSocket closed");
+      return () => socketRef.current.close();
+    }
+  }, [selectedUser]);
+  const fetchSubjects = useCallback(async () => {
+    try {
+      setLoading(true);
+      const response = await axiosInstance.get(
+        `${API_BASE}/subjects?school_id=${school.id}`
+      );
+      setSubjects(response.data);
+    } catch (error) {
+      console.error("Error fetching subjects:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [school.id]);
+  useEffect(()=>{
+    fetchSubjects();
+  },[])
 
   const handleSend = () => {
-    if (!selectedSubject || !inputMessage.trim()) return;
-
-    const sender = isStudent ? "Student" : "Teacher";
-    const newMessage = {
-      sender,
-      text: inputMessage,
-      attachment: attachment ? URL.createObjectURL(attachment) : null,
-    };
-
-    setChatMessages((prev) => ({
-      ...prev,
-      [selectedSubject]: [...(prev[selectedSubject] || []), newMessage],
-    }));
-
-    setInputMessage("");
-    setAttachment(null);
+    if (messageInput.trim() && socketRef.current.readyState === WebSocket.OPEN) {
+      const payload = {
+        type: "chat_message",
+        message: messageInput,
+        sender_id: user.id,
+        sender_name: user.name,
+      };
+      socketRef.current.send(JSON.stringify(payload));
+      setMessageInput("");
+    }
   };
 
+  
+
+   const getTeachers = async (subjectId)=>{
+      if (!subjectId) return;
+      setTeachers([]);
+      try {
+        setLoading(true);
+        const response = await axiosInstance.get(
+          `${API_BASE}/subjects/${subjectId}/details/`
+        );
+        setTeachers(response.data.teachers);
+        setLoading(false);
+      } catch(err){
+        console.log("Error in loading teachers : =>", err);
+        setLoading(false);
+
+      }
+
+   }
+
   return (
-    <div className="container-fluid py-3 px-4">
-      <div className="row shadow rounded border">
-        {/* Sidebar */}
-        <div className="col-md-4 bg-light p-3 border-end">
-          <h6
-            className="fw-bold text-white py-2 px-3 rounded"
-            style={{ backgroundColor: "#4A90E2" }}
-          >
-            📚 Select Subject
-          </h6>
-
-          <ul className="list-group mt-3">
+    <div className="container-fluid mt-4">
+      <div className="row">
+        {/* Left Panel */}
+        <div className="col-md-3">
+          <h6 className="fw-bold mb-2">📚 Subjects</h6>
+          <ListGroup className="mb-3">
             {subjects.map((subj) => (
-              <li
-                key={subj}
-                className={`list-group-item list-group-item-action ${
-                  selectedSubject === subj ? "bg-primary text-white" : ""
-                }`}
-                style={{ cursor: "pointer" }}
-                onClick={() => setSelectedSubject(subj)}
+              <ListGroup.Item
+                key={subj.id}
+                active={subj.id === selectedSubject}
+                action
+                onClick={() => {
+                  setSelectedSubject(subj.id);
+                  setSelectedUser(null);
+                  setMessages([]);
+                  getTeachers(subj.id);
+                }}
               >
-                {subj}
-              </li>
+                {subj.name}
+              </ListGroup.Item>
             ))}
-          </ul>
+          </ListGroup>
 
-          <div className="mt-4 ps-1">
-            <strong>
-              {isStudent ? "👩‍🏫 Teachers" : "👨‍🎓 Students"}
-            </strong>
-            <ul className="mt-1">
-              {(isStudent
-                ? teacherMap[selectedSubject]
-                : studentMap[selectedSubject]
-              )?.map((name) => (
-                <li key={name}>{name}</li>
-              ))}
-            </ul>
-          </div>
+          {selectedSubject && (
+            <>
+              <h6 className="fw-bold mb-2">
+                {isStudent ? "👨‍🏫 Teachers" : "👩‍🎓 Students"}
+              </h6>
+              <ListGroup>
+                {teachers.map((u) => (
+                  <ListGroup.Item
+                    key={u.id}
+                    active={selectedUser?.id === u.id}
+                    action
+                    onClick={() => {
+                      setSelectedUser(u);
+                      setMessages([]);
+                    }}
+                  >
+                    {u.name}
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            </>
+          )}
         </div>
 
-        {/* Chat Panel */}
-        <div className="col-md-8 d-flex flex-column p-3">
-          <div
-            className="mb-3 px-3 py-2 rounded text-white"
-            style={{ backgroundColor: "#4A90E2" }}
-          >
-            📘 {selectedSubject ? `${selectedSubject} Chat` : "Select a Subject"}
-          </div>
+        {/* Right Panel */}
+        <div className="col-md-9 d-flex flex-column">
+          <Card className="flex-grow-1 d-flex flex-column">
+            <Card.Header>
+              {selectedUser ? (
+                <div>
+                  Chat with{" "}
+                  <strong>
+                    {selectedUser.name} ({selectedSubject})
+                  </strong>
+                </div>
+              ) : (
+                "Select a user to start chatting"
+              )}
+            </Card.Header>
 
-          {/* Chat Messages */}
-          <div
-            className="flex-grow-1 bg-white border rounded p-3 mb-2 overflow-auto"
-            style={{ height: "400px" }}
-          >
-            {(chatMessages[selectedSubject] || []).map((msg, index) => (
-              <div key={index} className="mb-3">
-                <div className="fw-semibold">{msg.sender}:</div>
-                <div>{msg.text}</div>
-                {msg.attachment && (
-                  <div>
-                    📎 <a href={msg.attachment} target="_blank" rel="noreferrer">View File</a>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+            <Card.Body className="flex-grow-1 overflow-auto">
+              {messages.map((msg, idx) => (
+                <div key={idx} className="mb-2">
+                  <strong>{msg.sender_name}:</strong> {msg.message}
+                </div>
+              ))}
+            </Card.Body>
 
-          {/* Chat Input */}
-          <div className="d-flex gap-2">
-            <label className="btn btn-outline-secondary">
-              <FaPaperclip />
-              <input
-                type="file"
-                onChange={(e) => setAttachment(e.target.files[0])}
-                hidden
-              />
-            </label>
-            <input
-              type="text"
-              className="form-control"
-              value={inputMessage}
-              placeholder="Type your message..."
-              onChange={(e) => setInputMessage(e.target.value)}
-            />
-            <button onClick={handleSend} className="btn btn-primary">
-              Send
-            </button>
-          </div>
+            {selectedUser && (
+              <Card.Footer>
+                <Form className="d-flex gap-2">
+                  <Form.Control
+                    type="text"
+                    placeholder="Type a message..."
+                    value={messageInput}
+                    onChange={(e) => setMessageInput(e.target.value)}
+                  />
+                  <Button onClick={handleSend}>Send</Button>
+                </Form>
+              </Card.Footer>
+            )}
+          </Card>
         </div>
       </div>
     </div>
   );
-}
+};
 
-export default SmartClassroomChat;
+export default ChatPage;
