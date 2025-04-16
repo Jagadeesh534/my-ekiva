@@ -13,7 +13,7 @@ import axiosInstance from "../../../axiosInstance";
 import { useDispatch } from "react-redux";
 import { setSelectedClassObj } from "../../../features/studentSlice";
 
-const api = "https://92de-2409-40f0-11cd-308d-b6f5-64dd-bd65-3bb6.ngrok-free.app/api/classrooms/";
+const api = "https://176f-117-202-61-197.ngrok-free.app/api/classrooms/";
 
 const Classes = () => {
   const [expandedClassIds, setExpandedClassIds] = useState([]);

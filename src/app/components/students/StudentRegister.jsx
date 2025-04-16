@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../axiosInstance";
 import { toast, ToastContainer } from "react-toastify";
 import Loader from '../Loader';
-const api  = 'https://92de-2409-40f0-11cd-308d-b6f5-64dd-bd65-3bb6.ngrok-free.app/api/';
+const api  = 'https://176f-117-202-61-197.ngrok-free.app/api/';
 const StudentRegister = () => {
   const navigate = useNavigate();
   const [loading,setLoading] = useState(false);

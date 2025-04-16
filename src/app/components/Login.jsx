@@ -1,18 +1,19 @@
 import React, { useState } from "react";
-import { Container, Button, Row, Col, Form, Card } from "react-bootstrap";
+import { Container, Button, Row, Col, Form, Card, InputGroup } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { loginSuccess, updateUserInfo } from "../features/authSlice";
+import { loginSuccess } from "../features/authSlice";
 import ekivaLogo from "/src/assets/ekiva-logo.svg";
 import Loader from "./Loader";
 import axiosInstance from "../axiosInstance";
-import { toast, ToastContainer } from "react-toastify";
-const API_BASE = "https://92de-2409-40f0-11cd-308d-b6f5-64dd-bd65-3bb6.ngrok-free.app/api";
+import { toast } from "react-toastify";
+
+const API_BASE = "https://176f-117-202-61-197.ngrok-free.app/api";
 
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [response, setResponse] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
 
@@ -28,14 +29,11 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
     const validationErrors = validate();
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       return;
     }
-
-    setErrors({});
 
     setLoading(true);
     try {
@@ -43,8 +41,7 @@ function Login() {
         email: username,
         password: password,
       });
-      setResponse(res.data);
-      debugger;
+
       dispatch(
         loginSuccess({
           user: res.data.user,
@@ -53,16 +50,15 @@ function Login() {
           school: res.data.school,
         })
       );
+
       localStorage.setItem("access_token", res.data.access);
-      setLoading(false);
       navigate("/dashboard");
-      console.log("Login successful", response);
       toast.success("Login successful");
     } catch (error) {
       setErrors({ password: "Invalid username or password" });
+      toast.error("Login failed: " + error?.message);
+    } finally {
       setLoading(false);
-      toast.error("Error while login : " + error?.message);
-      console.error("Error during login:", error);
     }
   };
 
@@ -70,7 +66,7 @@ function Login() {
 
   return (
     <div className="app-container">
-      {/* Header Section with Wave */}
+      {/* Header Section */}
       <header className="wave-header">
         <div className="header-content">
           <img src={ekivaLogo} alt="logo" width={100} />
@@ -78,14 +74,10 @@ function Login() {
           <p className="subtitle">Teachers, AI, a New Journey</p>
         </div>
         <div className="wave">
-          <svg
-            viewBox="0 0 1440 320"
-            preserveAspectRatio="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+          <svg viewBox="0 0 1440 320" preserveAspectRatio="none">
             <path
               fill="#eaecef"
-              d="M0,160L30,165.3C60,171,120,181,180,192C240,203,300,213,360,202.7C420,192,480,160,540,160C600,160,660,192,720,208C780,224,840,224,900,224C960,224,1020,224,1080,202.7C1140,181,1200,139,1260,144C1320,149,1380,203,1410,229.3L1440,256L1440,320L1410,320C1380,320,1320,320,1260,320C1200,320,1140,320,1080,320C1020,320,960,320,900,320C840,320,780,320,720,320C660,320,600,320,540,320C480,320,420,320,360,320C300,320,240,320,180,320C120,320,60,320,30,320L0,320Z"
+              d="M0,160L30,165.3C60,171,120,181,180,192C240,203,300,213,360,202.7C420,192,480,160,540,160C600,160,660,192,720,208C780,224,840,224,900,224C960,224,1020,224,1080,202.7C1140,181,1200,139,1260,144C1320,149,1380,203,1410,229.3L1440,256L1440,320H0Z"
             />
           </svg>
         </div>
@@ -99,7 +91,6 @@ function Login() {
               <Card.Body>
                 <h2 className="text-center mb-4">Login to My Ekiva</h2>
 
-                {/* Login Form */}
                 <Form onSubmit={handleLogin}>
                   {/* Username */}
                   <Form.Group controlId="formUsername" className="mb-3">
@@ -110,9 +101,7 @@ function Login() {
                       isInvalid={!!errors.username}
                       onChange={(e) => {
                         setUsername(e.target.value);
-                        if (errors.username) {
-                          setErrors((prev) => ({ ...prev, username: null }));
-                        }
+                        setErrors((prev) => ({ ...prev, username: null }));
                       }}
                     />
                     <Form.Control.Feedback type="invalid">
@@ -120,23 +109,29 @@ function Login() {
                     </Form.Control.Feedback>
                   </Form.Group>
 
-                  {/* Password */}
+                  {/* Password + Show toggle */}
                   <Form.Group controlId="formPassword" className="mb-3">
-                    <Form.Control
-                      type="password"
-                      placeholder="Password"
-                      value={password}
-                      isInvalid={!!errors.password}
-                      onChange={(e) => {
-                        setPassword(e.target.value);
-                        if (errors.password) {
+                    <InputGroup>
+                      <Form.Control
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Password"
+                        value={password}
+                        isInvalid={!!errors.password}
+                        onChange={(e) => {
+                          setPassword(e.target.value);
                           setErrors((prev) => ({ ...prev, password: null }));
-                        }
-                      }}
-                    />
-                    <Form.Control.Feedback type="invalid">
-                      {errors.password}
-                    </Form.Control.Feedback>
+                        }}
+                      />
+                      <Button
+                        variant="outline-secondary"
+                        onClick={() => setShowPassword((prev) => !prev)}
+                      >
+                        {showPassword ? "Hide" : "Show"}
+                      </Button>
+                      <Form.Control.Feedback type="invalid">
+                        {errors.password}
+                      </Form.Control.Feedback>
+                    </InputGroup>
                   </Form.Group>
 
                   {/* Forgot Password */}
@@ -146,8 +141,7 @@ function Login() {
                     </a>
                   </div>
 
-                  {/* Submit */}
-                  <Button variant="primary" type="submit" className="w-100">
+                  <Button type="submit" className="w-100" variant="primary">
                     Login
                   </Button>
                 </Form>
