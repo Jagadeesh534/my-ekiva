@@ -7,6 +7,7 @@ import ekivaLogo from "/src/assets/ekiva-logo.svg";
 import Loader from "./Loader";
 import axiosInstance from "../axiosInstance";
 import { toast } from "react-toastify";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const API_BASE = "https://176f-117-202-61-197.ngrok-free.app/api";
 
@@ -39,7 +40,7 @@ function Login() {
     try {
       const res = await axiosInstance.post(`${API_BASE}/tokens/`, {
         email: username,
-        password: password,
+        password,
       });
 
       dispatch(
@@ -66,7 +67,7 @@ function Login() {
 
   return (
     <div className="app-container">
-      {/* Header Section */}
+      {/* Header */}
       <header className="wave-header">
         <div className="header-content">
           <img src={ekivaLogo} alt="logo" width={100} />
@@ -90,10 +91,9 @@ function Login() {
             <Card className="p-4 shadow-sm">
               <Card.Body>
                 <h2 className="text-center mb-4">Login to My Ekiva</h2>
-
                 <Form onSubmit={handleLogin}>
                   {/* Username */}
-                  <Form.Group controlId="formUsername" className="mb-3">
+                  <Form.Group className="mb-3">
                     <Form.Control
                       type="text"
                       placeholder="Username"
@@ -109,8 +109,8 @@ function Login() {
                     </Form.Control.Feedback>
                   </Form.Group>
 
-                  {/* Password + Show toggle */}
-                  <Form.Group controlId="formPassword" className="mb-3">
+                  {/* Password with toggle */}
+                  <Form.Group className="mb-3">
                     <InputGroup>
                       <Form.Control
                         type={showPassword ? "text" : "password"}
@@ -126,7 +126,7 @@ function Login() {
                         variant="outline-secondary"
                         onClick={() => setShowPassword((prev) => !prev)}
                       >
-                        {showPassword ? "Hide" : "Show"}
+                        {showPassword ? <FaEyeSlash /> : <FaEye />}
                       </Button>
                       <Form.Control.Feedback type="invalid">
                         {errors.password}
