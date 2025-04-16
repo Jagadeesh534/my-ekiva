@@ -138,7 +138,7 @@ const TeacherAssignmentPage = () => {
         username: teacherInfo.first_name,
       },
       school: 1,
-      subjects: [...subjectSet],
+      subject_ids: [...subjectSet],
       classroom_section_map,
     };
 
