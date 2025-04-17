@@ -7,8 +7,8 @@ import {
   fetchStudents
 } from "../../features/studentSlice";
 import axiosInstance from "../../axiosInstance";
+import config from "../../config";
 
-const API_BASE = "https://176f-117-202-61-197.ngrok-free.app/api/"; // Use your real API
 const StudentsList = () => {
     const dispatch = useDispatch();
     const [students,setStudents] = useState([]);
@@ -17,7 +17,7 @@ const StudentsList = () => {
    
     const fetchStudents = async () => {
       try {
-        const response = await axiosInstance.get(API_BASE + "students?classroom_id=" + selectedClass.classId + "&section_id=" + selectedClass.section.id);
+        const response = await axiosInstance.get(config.API_BASE + "students?classroom_id=" + selectedClass.classId + "&section_id=" + selectedClass.section.id);
         console.log("Fetched students data:", response);
         setStudents(response.data); 
       } catch (error) {

@@ -4,8 +4,7 @@ import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import axiosInstance from "../../../axiosInstance";
 import Loader from "../../Loader";
-
-const API_BASE = "https://176f-117-202-61-197.ngrok-free.app/"; // Use your real API
+import config from "../../../config";
 
 const ClassFormModal = ({ show, onHide, onSaved }) => {
   const [name, setName] = useState("");
@@ -67,7 +66,7 @@ const ClassFormModal = ({ show, onHide, onSaved }) => {
       console.log("Submitting:", payload);
       try {
         setLoading(true);
-        const response = await axiosInstance.post(`${API_BASE}api/classrooms/`, payload);
+        const response = await axiosInstance.post(`${config.API_BASE}classrooms/`, payload);
         console.log("Response from server:", response);
         if (response.status === 200) {
           console.log("Classrooms fetched successfully");
