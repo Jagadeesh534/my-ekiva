@@ -5,9 +5,7 @@ import axiosInstance from "../axiosInstance";
 
 const WEBSOCKET_BASE = "wss://176f-117-202-61-197.ngrok-free.app/ws/chat"; // Replace with actual
 const API_BASE = "https://176f-117-202-61-197.ngrok-free.app/api";
-const dummyStudnet = [{
-  id : 15,first_name: 'Teja', last_name: 'Kumar',
-}]
+const dummyStudent = [{ id: 15, first_name: "Teja", last_name: "Kumar" }];
 
 const ChatPage = () => {
   const loginType = useSelector((state) => state.auth.loginType); // "student" or "teacher"
@@ -44,7 +42,7 @@ const ChatPage = () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(`${API_BASE}/subjects/${subjectId}/details/`);
-      setParticipants(isStudent ? response.data.teachers : dummyStudnet);
+      setParticipants(isStudent ? response.data.teachers : dummyStudent);
     } catch (err) {
       console.error("Error fetching participants:", err);
     } finally {
@@ -53,8 +51,8 @@ const ChatPage = () => {
   };
 
   useEffect(() => {
-    if(!isStudent) {
-      setParticipants(dummyStudnet);
+    if (!isStudent) {
+      setParticipants(dummyStudent);
     }
     fetchSubjects();
   }, [fetchSubjects]);
@@ -75,7 +73,6 @@ const ChatPage = () => {
     return () => {
       if (socketRef.current) socketRef.current.close();
     };
-  
   }, [selectedUser]);
 
   const handleSend = () => {
@@ -119,7 +116,6 @@ const ChatPage = () => {
           {selectedSubject && (
             <>
               <h6 className="fw-bold mb-2">
-          
                 {isStudent ? "👨‍🏫 Teachers" : "👩‍🎓 Students"}
               </h6>
               <ListGroup>
@@ -170,6 +166,12 @@ const ChatPage = () => {
                     placeholder="Type a message..."
                     value={messageInput}
                     onChange={(e) => setMessageInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSend();
+                      }
+                    }}
                   />
                   <Button onClick={handleSend}>Send</Button>
                 </Form>

@@ -4,8 +4,7 @@ import { toast } from "react-toastify";
 import axiosInstance from "../../axiosInstance";
 import { useNavigate, useParams } from "react-router-dom";
 import Loader  from "../../components/Loader";
-
-const api = "https://176f-117-202-61-197.ngrok-free.app/api/";
+import config from "../../config";
 const TeacherAssignmentPage = () => {
   const [teacherId, setTeacherId] = useState(null);
   const param = useParams();
@@ -37,7 +36,7 @@ const TeacherAssignmentPage = () => {
     const fetchSubjects = async () => {
       try {
         setLoading(true);
-        const response = await axiosInstance.get(api + "subjects/");
+        const response = await axiosInstance.get(config.API_BASE + "subjects/");
         setAllSubjects(response.data);
         setLoading(false);
       } catch (error) {
@@ -48,7 +47,7 @@ const TeacherAssignmentPage = () => {
     const fetchClasses = async () => {
       try {
         setLoading(true);
-        const response = await axiosInstance.get(api + "classrooms/");
+        const response = await axiosInstance.get(config.API_BASE + "classrooms/");
         setAllClasses(response.data);
         setLoading(false);
       } catch (error) {
@@ -63,7 +62,7 @@ const TeacherAssignmentPage = () => {
       const fetchTeacher = async () => {
         try {
           setLoading(true);
-          const response = await axiosInstance.get(api + `teachers/${teacherId}/`);
+          const response = await axiosInstance.get(config.API_BASE + `teachers/${teacherId}/`);
           setTeacherInfo(response.data.user);
           setAssignments(response.data.assignments);
           setLoading(false);
@@ -145,7 +144,7 @@ const TeacherAssignmentPage = () => {
     console.log("Final Payload:", finalData);
     try {
       setLoading(true);
-      const response = await axiosInstance.post(api + "teachers/", finalData);
+      const response = await axiosInstance.post(config.API_BASE + "teachers/", finalData);
       setLoading(false);
       if (response.status === 201) {
         toast.success("Teacher info & assignments saved ✅");

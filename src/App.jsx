@@ -23,6 +23,7 @@ import TeacherListPage from "./app/components/teachers/TeacherListPage";
 import TeacherAssignmentPage from "./app/components/teachers/TeacherAssignmentPage";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ChatWithAI from "./app/components/ChatWithAI";
 
 function App() {
   const loginType = useSelector((state) => state.auth.loginType);
@@ -100,7 +101,11 @@ function App() {
             path="smart-class"
             element={<SmartClassroomChat role={loginType} />}
           />
+          <Route path="ekiva-ai" element={<ChatWithAI title="ekiva-ai"/>}>
+
+          </Route>
         </Route>
+
 
         {/* 404 Not Found */}
         <Route path="*" element={<NotFound />} />

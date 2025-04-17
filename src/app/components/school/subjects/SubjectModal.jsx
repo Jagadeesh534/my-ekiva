@@ -5,8 +5,7 @@ import { toast } from "react-toastify";
 import axiosInstance from "../../../axiosInstance";
 import { useSelector } from "react-redux";
 import Loader from "../../Loader";
-
-const api = "https://176f-117-202-61-197.ngrok-free.app/api/";
+import config from "../../../config";
 
 const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
   const [formData, setFormData] = useState({ name: "", classroom_ids: [],id:null });
@@ -21,7 +20,7 @@ const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
   useEffect(() => {
     const fetchClassData = async () => {
       try {
-        const response = await axiosInstance.get(`${api}classrooms/`);
+        const response = await axiosInstance.get(`${config.API_BASE}classrooms/`);
         const options = response.data.map((c) => ({
           value: c.id,
           label: c.name,
@@ -31,7 +30,7 @@ const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
           if (subject) {
             try {
               setLoading(true);
-              const response = await axiosInstance.get(`${api}subjects/${subject.id}/`);
+              const response = await axiosInstance.get(`${config.API_BASE}subjects/${subject.id}/`);
               const subjectData = response.data;
               console.log(subjectData);
               setFormData({
@@ -87,7 +86,7 @@ const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
     try {
       setLoading(true);
       setDisableModalClose(true);
-        await axiosInstance.post(`${api}subjects/`, payload);
+        await axiosInstance.post(`${config.API_BASE}subjects/`, payload);
     
       setLoading(false);
       toast.success("Subject created successfully ✅", {

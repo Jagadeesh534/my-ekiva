@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../axiosInstance";
 import { toast, ToastContainer } from "react-toastify";
 import Loader from '../Loader';
-const api  = 'https://176f-117-202-61-197.ngrok-free.app/api/';
+import config from "../../config";
 const StudentRegister = () => {
   const navigate = useNavigate();
   const [loading,setLoading] = useState(false);
@@ -55,7 +55,7 @@ const StudentRegister = () => {
 
     console.log("🎓 Final Student Registration Payload:", payload);
     try {
-      const response = await axiosInstance.post(`${api}students/`, payload);
+      const response = await axiosInstance.post(`${config.API_BASE}students/`, payload);
       console.log("Response from server:", response);
       if (response.status === 201) {
         toast.success("Student registered successfully!");

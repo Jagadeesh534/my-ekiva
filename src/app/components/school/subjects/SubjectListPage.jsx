@@ -5,8 +5,7 @@ import SubjectCard from "./SubjectCard";
 import axiosInstance from "../../../axiosInstance";
 import Loader from "../../Loader";
 import { useSelector } from "react-redux";
-
-const API_BASE = "https://176f-117-202-61-197.ngrok-free.app/api";
+import config from "../../../config";
 
 const SubjectListPage = () => {
   const [subjects, setSubjects] = useState([]);
@@ -20,7 +19,7 @@ const SubjectListPage = () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get(
-        `${API_BASE}/subjects?school_id=${school.id}`
+        `${config.API_BASE}subjects?school_id=${school.id}`
       );
       setSubjects(response.data);
     } catch (error) {

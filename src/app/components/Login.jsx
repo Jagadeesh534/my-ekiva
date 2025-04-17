@@ -9,7 +9,7 @@ import axiosInstance from "../axiosInstance";
 import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-const API_BASE = "https://176f-117-202-61-197.ngrok-free.app/api";
+import config from "../config";
 
 function Login() {
   const [username, setUsername] = useState("");
@@ -38,7 +38,7 @@ function Login() {
 
     setLoading(true);
     try {
-      const res = await axiosInstance.post(`${API_BASE}/tokens/`, {
+      const res = await axiosInstance.post(`${config.API_BASE}tokens/`, {
         email: username,
         password,
       });

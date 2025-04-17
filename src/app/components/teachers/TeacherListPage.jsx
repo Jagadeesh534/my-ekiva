@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaChalkboardTeacher } from "react-icons/fa";
 import axiosInstance from "../../axiosInstance";
 import Loader from "../Loader";
-const api = 'https://176f-117-202-61-197.ngrok-free.app/api/';
+import config from "../../config";
 
 const TeacherListPage = () => {
   const navigate = useNavigate();
@@ -14,7 +14,7 @@ const TeacherListPage = () => {
     const fetchTeachers = async () => {
       try {
         setLoading(true);
-        const response = await axiosInstance.get(`${api}teachers/`);
+        const response = await axiosInstance.get(`${config.API_BASE}teachers/`);
         console.log(response.data);
         setLoading(false);
         setTeachers(response.data);

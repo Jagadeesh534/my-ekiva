@@ -12,8 +12,7 @@ import ClassFormModal from "./ClassFormModal";
 import axiosInstance from "../../../axiosInstance";
 import { useDispatch } from "react-redux";
 import { setSelectedClassObj } from "../../../features/studentSlice";
-
-const api = "https://176f-117-202-61-197.ngrok-free.app/api/classrooms/";
+import config from "../../../config";
 
 const Classes = () => {
   const [expandedClassIds, setExpandedClassIds] = useState([]);
@@ -40,7 +39,7 @@ const Classes = () => {
   useEffect(() => {
     const fetchClassData = async () => {
       try {
-        const response = await axiosInstance.get(api);
+        const response = await axiosInstance.get(`${config.API_BASE}classrooms/`);
         setClassData(response.data);
       } catch (error) {
         console.error("Error fetching class data:", error);
