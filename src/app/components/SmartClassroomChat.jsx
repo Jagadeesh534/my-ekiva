@@ -77,7 +77,7 @@ const ChatPage = () => {
         endpoint = `${config.API_BASE}students?classroom_id=${selectedClass}&section_id=${selectedSection}`;
       }
       const res = await axiosInstance.get(endpoint);
-      if(Array.isArray(res.data)) {
+      if((!isStudent && Array.isArray(res.data)) || (isStudent && Array.isArray(res.data.teachers))) {
       setParticipants(isStudent ? res.data.teachers : res.data);
       } else {
         setParticipants([]);
