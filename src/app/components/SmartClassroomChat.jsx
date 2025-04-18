@@ -5,7 +5,6 @@ import {
   Button,
   ListGroup,
   Card,
-  Spinner,
   Badge,
   Nav,
   Tab,
@@ -29,9 +28,9 @@ const ChatPage = () => {
   const [selectedUser, setSelectedUser] = useState(null);
   const [myMessages, setMyMessages] = useState([]);
   const [messages, setMessages] = useState([]);
+  const [unreadCounts, setUnreadCounts] = useState({});
   const [messageInput, setMessageInput] = useState("");
   const [attachment, setAttachment] = useState(null);
-  const [loading, setLoading] = useState(false);
 
   const socketRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -52,47 +51,43 @@ const ChatPage = () => {
     try {
       const res = await axiosInstance.get(`${config.API_BASE}classrooms/`);
       setClasses(res.data);
-      console.log("Classes:", res.data);
     } catch (err) {
       console.error("Error fetching classes:", err);
     }
   }, []);
-  useEffect(() => {
-    if (!isStudent && selectedClass && selectedSection) {
-      fetchParticipants();
-    } else {
-      fetchParticipants();
-    }
-  }, [selectedClass, selectedSection,selectedSubject]);
-  const fetchParticipants = async () => {
+
+  const fetchParticipants = useCallback(async () => {
     try {
-      console.log("Fetching participants...");
-      console.log('Selected Subject:', selectedSubject);
-      console.log('Selected Class:', selectedClass);
-      console.log('Selected Section:', selectedSection);
       let endpoint = "";
       if (isStudent && selectedSubject) {
         endpoint = `${config.API_BASE}subjects/${selectedSubject}/details/`;
       } else if (!isStudent && selectedClass && selectedSection) {
         endpoint = `${config.API_BASE}students?classroom_id=${selectedClass}&section_id=${selectedSection}`;
+      } else {
+        setParticipants([]);
+        return;
       }
+
       const res = await axiosInstance.get(endpoint);
-      if((!isStudent && Array.isArray(res.data)) || (isStudent && Array.isArray(res.data.teachers))) {
-      setParticipants(isStudent ? res.data.teachers : res.data);
+      if ((isStudent && Array.isArray(res.data.teachers)) || (!isStudent && Array.isArray(res.data))) {
+        setParticipants(isStudent ? res.data.teachers : res.data);
       } else {
         setParticipants([]);
       }
-      console.log("Participants:", res.data);
     } catch (err) {
-      setLoading(false);
       console.error("Error fetching participants:", err);
     }
-  };
+  }, [isStudent, selectedClass, selectedSection, selectedSubject]);
 
   useEffect(() => {
-    if (isStudent) fetchSubjects();
-    else fetchClasses();
-  }, [fetchSubjects, fetchClasses]);
+    isStudent ? fetchSubjects() : fetchClasses();
+  }, [fetchSubjects, fetchClasses, isStudent]);
+
+  useEffect(() => {
+    if ((isStudent && selectedSubject) || (!isStudent && selectedClass && selectedSection)) {
+      fetchParticipants();
+    }
+  }, [fetchParticipants, selectedSubject, selectedClass, selectedSection]);
 
   useEffect(() => {
     if (!selectedUser) return;
@@ -102,14 +97,22 @@ const ChatPage = () => {
     socketRef.current.onmessage = (e) => {
       const data = JSON.parse(e.data);
       setMessages((prev) => [...prev, data]);
-      if (!myMessages.find((u) => u.id === data.sender_id)) {
-        setMyMessages((prev) => [...prev, { id: data.sender_id, name: data.sender_name }]);
+
+      if (data.sender_id !== user.id) {
+        setUnreadCounts((prev) => ({
+          ...prev,
+          [data.sender_id]: (prev[data.sender_id] || 0) + 1,
+        }));
+
+        if (!myMessages.find((u) => u.id === data.sender_id)) {
+          setMyMessages((prev) => [...prev, { id: data.sender_id, name: data.sender_name }]);
+        }
       }
     };
 
     socketRef.current.onclose = () => console.log("WebSocket closed");
     return () => socketRef.current?.close();
-  }, [selectedUser]);
+  }, [selectedUser, myMessages]);
 
   useEffect(scrollToBottom, [messages]);
 
@@ -130,140 +133,127 @@ const ChatPage = () => {
     socketRef.current.send(JSON.stringify(payload));
     setMessageInput("");
     setAttachment(null);
+    setUnreadCounts((prev) => ({ ...prev, [selectedUser.id]: 0 }));
   };
 
   return (
     <div className="container-fluid vh-100 d-flex flex-column">
       <div className="row flex-grow-1 h-100 overflow-hidden">
-        {/* Sidebar Tabs */}
         <Tab.Container defaultActiveKey="subjects">
-          <div className="col-md-3 border-end py-3 bg-light overflow-auto">
-            <Nav variant="tabs" className="mb-3">
+          <div className="col-md-3 border-end bg-light d-flex flex-column" style={{ height: "100%" }}>
+            <Nav variant="tabs" className="mb-2 px-2">
               <Nav.Item>
                 <Nav.Link eventKey="subjects">{isStudent ? "Subjects" : "Classes"}</Nav.Link>
               </Nav.Item>
               <Nav.Item>
-                <Nav.Link eventKey="messages">My Messages</Nav.Link>
+                <Nav.Link eventKey="messages">
+                  My Messages {Object.keys(unreadCounts).length > 0 && (
+                    <Badge bg="danger" className="ms-1">{Object.values(unreadCounts).reduce((a, b) => a + b, 0)}</Badge>
+                  )}
+                </Nav.Link>
               </Nav.Item>
             </Nav>
 
-            <Tab.Content>
-              <Tab.Pane eventKey="subjects">
-                {isStudent ? (
-                  <ListGroup>
-                    {subjects.map((s) => (
-                      <ListGroup.Item
-                        key={s.id}
-                        active={s.id === selectedSubject}
-                        action
-                        onClick={() => {
-                          setSelectedSubject(s.id);
-                          setSelectedUser(null);
-                          setMessages([]);
-                        }}
-                      >
-                        {s.name}
-                      </ListGroup.Item>
-                    ))}
-                  </ListGroup>
-                ) : (
-                  <>
-                    <Form.Select
-                      className="mb-2"
-                      value={selectedClass || ""}
-                      onChange={(e) => {
+            <div style={{ overflowY: "auto", flexGrow: 1, padding: "0 0.75rem" }}>
+              <Tab.Content>
+                <Tab.Pane eventKey="subjects">
+                  {isStudent ? (
+                    <ListGroup>
+                      {subjects.map((s) => (
+                        <ListGroup.Item
+                          key={s.id}
+                          active={s.id === selectedSubject}
+                          action
+                          onClick={() => {
+                            setSelectedSubject(s.id);
+                            setSelectedUser(null);
+                            setMessages([]);
+                          }}
+                        >{s.name}</ListGroup.Item>
+                      ))}
+                    </ListGroup>
+                  ) : (
+                    <>
+                      <Form.Select className="mb-2" value={selectedClass || ""} onChange={(e) => {
                         setSelectedClass(e.target.value);
                         setSelectedSection(null);
-                      }}
-                    >
-                      <option value="">Select Class</option>
-                      {classes.map((cls) => (
-                        <option key={cls.id} value={cls.id}>{cls.name}</option>
-                      ))}
-                    </Form.Select>
-                    {selectedClass && (
-                      <Form.Select
-                      value={selectedSection || ""}
-                        className="mb-2"
-                        onChange={(e) => {
-                          debugger
+                        setSelectedUser(null);
+                        setMessages([]);
+                      }}>
+                        <option value="">Select Class</option>
+                        {classes.map((cls) => <option key={cls.id} value={cls.id}>{cls.name}</option>)}
+                      </Form.Select>
+                      {selectedClass && (
+                        <Form.Select value={selectedSection || ""} className="mb-2" onChange={(e) => {
                           setSelectedSection(e.target.value);
-                          console.log("Selected Section:", selectedSection);
                           setSelectedUser(null);
                           setMessages([]);
-                        }}
-                      >
-                        <option value="">Select Section</option>
-                        {classes.find((c) => c.id == selectedClass)?.sections?.map((sec) => (
-                          <option key={sec.id} value={sec.id}>{sec.name}</option>
-                        ))}
-                      </Form.Select>
-                    )}
-                  </>
-                )}
+                        }}>
+                          <option value="">Select Section</option>
+                          {classes.find((c) => c.id == selectedClass)?.sections?.map((sec) => (
+                            <option key={sec.id} value={sec.id}>{sec.name}</option>
+                          ))}
+                        </Form.Select>
+                      )}
+                    </>
+                  )}
 
-                {/* Participants */}
-                <hr className="my-3" />
-                <h6 className="fw-bold">
-                  {isStudent ? "Teachers" : "Students"}
-                </h6>
-                <ListGroup>
-                  {participants?.map((p) => (
-                  isStudent ?  <ListGroup.Item
-                      key={p.id}
-                      active={selectedUser?.id === p.id}
-                      action
-                      onClick={() => {
-                        setSelectedUser(p);
-                        setMessages([]);
-                      }}
-                    >
-                      {p.name || `${p.first_name} ${p.last_name}`}
-                    </ListGroup.Item> : 
-                    <ListGroup.Item
-                      key={p.user.id}
-                      active={selectedUser?.id === p.user.id}
-                      action
-                      onClick={() => {
-                        setSelectedUser(p.user);
-                        setMessages([]);
-                      }}
-                    >
-                      {p.user.first_name} {p.user.last_name}
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
-              </Tab.Pane>
+                  <hr className="my-3" />
+                  <h6 className="fw-bold">{isStudent ? "Teachers" : "Students"}</h6>
+                  <ListGroup>
+                    {participants.map((p) => {
+                      const id = isStudent ? p.id : p.user.id;
+                      const name = isStudent ? (p.name || `${p.first_name} ${p.last_name}`) : `${p.user.first_name} ${p.user.last_name}`;
+                      return (
+                        <ListGroup.Item
+                          key={id}
+                          active={selectedUser?.id === id}
+                          action
+                          onClick={() => {
+                            setSelectedUser(isStudent ? p : p.user);
+                            setMessages([]);
+                            setUnreadCounts((prev) => ({ ...prev, [id]: 0 }));
+                          }}
+                        >
+                          {name}
+                          {unreadCounts[id] > 0 && <Badge bg="danger" pill className="float-end">{unreadCounts[id]}</Badge>}
+                        </ListGroup.Item>
+                      );
+                    })}
+                  </ListGroup>
+                </Tab.Pane>
 
-              <Tab.Pane eventKey="messages">
-                <ListGroup>
-                  {myMessages.map((msgUser) => (
-                    <ListGroup.Item
-                      key={msgUser.id}
-                      active={selectedUser?.id === msgUser.id}
-                      action
-                      onClick={() => {
-                        setSelectedUser(msgUser);
-                        setMessages([]);
-                      }}
-                    >
-                      {msgUser.name}
-                    </ListGroup.Item>
-                  ))}
-                </ListGroup>
-              </Tab.Pane>
-            </Tab.Content>
+                <Tab.Pane eventKey="messages">
+                  <ListGroup>
+                    {myMessages
+                      .filter((msgUser) => msgUser.id !== user.id)
+                      .map((msgUser) => (
+                        <ListGroup.Item
+                          key={msgUser.id}
+                          active={selectedUser?.id === msgUser.id}
+                          action
+                          onClick={() => {
+                            setSelectedUser(msgUser);
+                            setMessages([]);
+                            setUnreadCounts((prev) => ({ ...prev, [msgUser.id]: 0 }));
+                          }}
+                        >
+                          {msgUser.name}
+                          {unreadCounts[msgUser.id] > 0 && <Badge bg="danger" pill className="float-end">{unreadCounts[msgUser.id]}</Badge>}
+                        </ListGroup.Item>
+                      ))}
+                  </ListGroup>
+                </Tab.Pane>
+              </Tab.Content>
+            </div>
           </div>
         </Tab.Container>
 
-        {/* Chat Area */}
         <div className="col-md-9 d-flex flex-column p-0 h-100">
           <Card className="flex-grow-1 d-flex flex-column h-100">
             <Card.Header>
               {selectedUser ? (
-                <div>
-                  Chat with <strong>{selectedUser.name || `${selectedUser.first_name} ${selectedUser.last_name}`}</strong>
-                </div>
+                <div>Chat with <strong>{selectedUser.name || `${selectedUser.first_name} ${selectedUser.last_name}`}</strong></div>
               ) : (
                 "Select a participant to start chatting"
               )}
@@ -273,27 +263,19 @@ const ChatPage = () => {
               {messages.map((msg, idx) => {
                 const isOwn = msg.sender_id === user.id;
                 return (
-                  <div
-                    key={idx}
-                    className={`mb-3 d-flex ${isOwn ? "justify-content-end" : "justify-content-start"}`}
-                  >
-                    <div
-                      className={`p-3 rounded shadow-sm ${isOwn ? "bg-primary text-white" : "bg-light border"}`}
-                      style={{ maxWidth: "75%" }}
-                    >
+                  <div key={idx} className={`mb-3 d-flex ${isOwn ? "justify-content-end" : "justify-content-start"}`}>
+                    <div className={`p-3 rounded shadow-sm ${isOwn ? "bg-primary text-white" : "bg-light border"}`} style={{ maxWidth: "75%" }}>
                       <div className="small fw-semibold mb-2">{isOwn ? "You" : msg.sender_name}</div>
                       {msg.message && <div>{msg.message}</div>}
                       {msg.attachment && (
                         <div className="mt-2">
-                          📎 <a
+                          📌 <a
                             href={msg.attachment}
                             download={msg.attachment_name}
                             target="_blank"
                             rel="noreferrer"
                             className={isOwn ? "text-white" : "text-primary"}
-                          >
-                            {msg.attachment_name || "View File"}
-                          </a>
+                          >{msg.attachment_name || "View File"}</a>
                         </div>
                       )}
                     </div>
@@ -303,29 +285,19 @@ const ChatPage = () => {
               <div ref={messagesEndRef} />
             </Card.Body>
 
-            {/* Chat Input */}
             {selectedUser && (
               <Card.Footer className="bg-white">
-                <Form
-                  className="d-flex gap-2 align-items-center"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    handleSend();
-                  }}
-                >
+                <Form className="d-flex gap-2 align-items-center" onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSend();
+                }}>
                   <label className="btn btn-outline-secondary mb-0" title="Attach File">
                     <FaPaperclip />
-                    <input
-                      type="file"
-                      hidden
-                      onChange={(e) => setAttachment(e.target.files[0])}
-                    />
+                    <input type="file" hidden onChange={(e) => setAttachment(e.target.files[0])} />
                   </label>
 
                   {attachment && (
-                    <Badge bg="info" className="text-truncate" style={{ maxWidth: "150px" }}>
-                      {attachment.name}
-                    </Badge>
+                    <Badge bg="info" className="text-truncate" style={{ maxWidth: "150px" }}>{attachment.name}</Badge>
                   )}
 
                   <Form.Control
