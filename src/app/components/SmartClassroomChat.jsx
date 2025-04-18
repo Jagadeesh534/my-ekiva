@@ -60,8 +60,10 @@ const ChatPage = () => {
   useEffect(() => {
     if (!isStudent && selectedClass && selectedSection) {
       fetchParticipants();
+    } else {
+      fetchParticipants();
     }
-  }, [selectedClass, selectedSection]);
+  }, [selectedClass, selectedSection,selectedSubject]);
   const fetchParticipants = async () => {
     try {
       console.log("Fetching participants...");
@@ -153,7 +155,6 @@ const ChatPage = () => {
                           setSelectedSubject(s.id);
                           setSelectedUser(null);
                           setMessages([]);
-                          fetchParticipants();
                         }}
                       >
                         {s.name}
@@ -202,7 +203,7 @@ const ChatPage = () => {
                   {isStudent ? "Teachers" : "Students"}
                 </h6>
                 <ListGroup>
-                  {participants.map((p) => (
+                  {participants?.map((p) => (
                   isStudent ?  <ListGroup.Item
                       key={p.id}
                       active={selectedUser?.id === p.id}
