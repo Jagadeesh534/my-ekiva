@@ -4,7 +4,8 @@ import { FaDollarSign,FaClock, FaClipboardList,FaTrophy, FaUserAlt, FaUserCheck,
 import { useSelector } from "react-redux";
 import Slider from "react-slick";
 import axiosInstance from "../axiosInstance";
-const API_BASE = "https://176f-117-202-61-197.ngrok-free.app/api/"; // Use your real API
+import config from "../config";
+// const API_BASE = "https://176f-117-202-61-197.ngrok-free.app/api/"; // Use your real API
 const Dashboard = () => {
   const navigate = useNavigate();
   const loginType = useSelector((state)=> state.auth.loginType);
@@ -90,7 +91,7 @@ const Dashboard = () => {
   useEffect(()=>{
     const fetchSchoolStats = async () => {
       try {
-        const response = await axiosInstance.get(API_BASE + "school_stats?school_id=" + school.id);
+        const response = await axiosInstance.get(config.API_BASE + "school_stats?school_id=" + school.id);
         console.log("Fetched school stats data:", response);
         setSchoolStats(response.data.school_stats);
         const cardDataAdmin = [
