@@ -1,133 +1,233 @@
-import React, { useState } from "react";
-import { Button, Form, Card, Spinner } from "react-bootstrap";
+import React, { useState, useRef, useEffect } from "react";
+import {
+  Form,
+  Button,
+  Spinner,
+  Tooltip,
+  OverlayTrigger,
+} from "react-bootstrap";
 import axiosInstance from "../axiosInstance";
 import config from "../config";
-import Loader from "./Loader";
-
+import { useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { FaCopy } from "react-icons/fa";
 function ChatWithAI() {
   const [prompt, setPrompt] = useState("");
-  const [chatHistory, setChatHistory] = useState([]); // full history
-  const [selectedIndex, setSelectedIndex] = useState(null); // which message is being viewed
+  const [conversation, setConversation] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedMessages, setSelectedMessages] = useState([]);
+  const [data, setData] = useState([]);
+  const userInfo = useSelector((state) => state.auth.userInfo);
+  const messagesEndRef = useRef(null);
+  const todayDate = new Date().toISOString().split("T")[0];
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `${config.API_BASE}generate/`,
+          {
+            params: { user_id: userInfo.id },
+          }
+        );
+        const groupedData = response.data.data.reduce((acc, item) => {
+          const createdAt = new Date(item.date);
+          const date = !isNaN(createdAt)
+            ? createdAt.toISOString().split("T")[0]
+            : "Unknown Date";
+
+          if (!acc[date]) acc[date] = [];
+          acc[date].push(item);
+          return acc;
+        }, {});
+
+        const finalData = Object.entries(groupedData).map(
+          ([date, messages]) => ({
+            date,
+            messages,
+          })
+        );
+
+        setData(finalData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const handleDateSelect = (date) => {
+    setSelectedDate(date);
+    const messagesForDate = data.find((item) => item.date === date);
+    const reversedContentMessage = {
+      ...messagesForDate?.messages[0],
+      content: [...(messagesForDate?.messages[0]?.content || [])].reverse(),
+    };
+    setSelectedMessages(reversedContentMessage);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!prompt.trim()) return;
+    const cleanPrompt = prompt.trim();
+    if (!cleanPrompt || !selectedMessages) return;
 
     setIsLoading(true);
 
     try {
-      const res = await axiosInstance.get(
-        `${config.API_BASE}generate/?topic=${encodeURIComponent(prompt)}`
-      );
+      const res = await axiosInstance.post(`${config.API_BASE}generate/`, {
+        user_id: userInfo.id,
+        topic: cleanPrompt,
+      });
 
-      const parsed = res.data?.parsed;
+      debugger;
+      const newContent = res.data.data[0].content[0];
+      debugger;
+      console.log("New content:", newContent);
 
-      const newEntry = {
-        prompt,
-        response: parsed,
+      // Append to selectedMessages.content
+      setSelectedMessages((prev) => ({
+        ...prev,
+        content: [...prev.content, newContent],
+      }));
+    } catch (error) {
+      const fallbackEntry = {
+        topic: cleanPrompt,
+        content: "❌ Failed to fetch response.",
+        created_at: new Date().toISOString(),
       };
-
-      setChatHistory((prev) => [...prev, newEntry]);
-      setSelectedIndex(chatHistory.length); // select latest
-    } catch (err) {
-      console.error("Error:", err);
-      const fallback = {
-        prompt,
-        response: {
-          basic: "❌ Failed to fetch response",
-          medium: "",
-          advanced: "",
-        },
-      };
-      setChatHistory((prev) => [...prev, fallback]);
-      setSelectedIndex(chatHistory.length);
+      setSelectedMessages((prev) => ({
+        ...prev,
+        content: [...prev.content, fallbackEntry],
+      }));
     } finally {
-      setPrompt("");
       setIsLoading(false);
+      setPrompt("");
     }
   };
 
-  const selectedChat = chatHistory[selectedIndex];
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text).then(
+      () => toast.success("Text copied to clipboard!"),
+      (err) => toast.error("Failed to copy text: " + err)
+    );
+  };
 
   return (
-    <div className="d-flex flex-column flex-md-row vh-100">
+    <div className="d-flex vh-100">
       {/* Sidebar */}
       <div
-        className="bg-light border-end border-2 p-3"
-        style={{ width: "100%", maxWidth: "250px", overflowY: "auto" }}
+        className="bg-light text-dark p-3 border-end"
+        style={{ width: "250px" }}
       >
-        <h5 className="mb-3 text-primary">🧠 Chat History</h5>
-        {chatHistory.map((item, idx) => (
-          <div
-            key={idx}
-            className={`small p-2 mb-2 rounded text-truncate ${
-              selectedIndex === idx ? "bg-primary text-white" : "bg-white text-dark border"
-            }`}
-            style={{ cursor: "pointer" }}
-            onClick={() => setSelectedIndex(idx)}
-            title={item.prompt}
-          >
-            • {item.prompt}
-          </div>
-        ))}
+        <h5 className="mb-4">Askiva</h5>
+        <input className="form-control mb-4" placeholder="Search" />
+        <div className="d-flex flex-column">
+          {data.map((item, idx) => (
+            <Button
+              key={idx}
+              variant={
+                item.date === selectedDate ? "secondary" : "outline-secondary"
+              }
+              className="mb-2"
+              onClick={() => handleDateSelect(item.date)}
+            >
+              {item.date}
+            </Button>
+          ))}
+        </div>
       </div>
 
-      {/* Chat View */}
+      {/* Chat Area */}
       <div className="flex-grow-1 d-flex flex-column bg-white">
         <div
           className="flex-grow-1 overflow-auto p-4"
           style={{ maxHeight: "calc(100vh - 100px)" }}
         >
+          {selectedMessages?.content?.map((msg, index) => (
+            <React.Fragment key={index}>
+              {/* Question (Topic) - Right aligned */}
+              <div className="d-flex justify-content-end mb-2">
+                <div
+                  className="p-3 rounded shadow-sm text-white"
+                  style={{
+                    backgroundColor: "#007bff",
+                    maxWidth: "75%",
+                    whiteSpace: "pre-wrap",
+                  }}
+                >
+                  {msg.topic}
+                </div>
+              </div>
+
+              {/* Answer (Content) - Left aligned */}
+              <div className="d-flex justify-content-start mb-4">
+                <div
+                  className="p-3 rounded shadow-sm"
+                  style={{
+                    backgroundColor: "#f8f9fa",
+                    color: "#212529",
+                    maxWidth: "75%",
+                    whiteSpace: "pre-wrap",
+                  }}
+                >
+                  {msg.content}
+                </div>
+                <div className="d-flex align-items-start ms-2">
+                  <OverlayTrigger
+                    placement="top"
+                    overlay={<Tooltip>Copy to clipboard</Tooltip>}
+                  >
+                    <Button
+                      variant="outline-secondary"
+                      size="sm"
+                      onClick={() => copyToClipboard(msg.content)}
+                    >
+                      <FaCopy />
+                    </Button>
+                  </OverlayTrigger>
+                </div>
+              </div>
+            </React.Fragment>
+          ))}
+
           {isLoading && (
             <div className="d-flex justify-content-center my-4">
               <Spinner animation="border" />
             </div>
           )}
 
-          {!isLoading && selectedChat && (
-            <>
-              <h5 className="text-primary mb-3">📝 You asked:</h5>
-              <Card className="mb-4">
-                <Card.Body>{selectedChat.prompt}</Card.Body>
-              </Card>
-
-              <h5 className="text-success mb-3">🤖 AI Response</h5>
-              <div className="row g-4">
-                {["advanced", "medium", "basic"].map((level) => (
-                  <div className="col-md-4" key={level}>
-                    <Card className="shadow-sm border-0 h-100">
-                      <Card.Header className="text-capitalize bg-secondary text-white fw-bold">
-                        {level}
-                      </Card.Header>
-                      <Card.Body style={{ whiteSpace: "pre-wrap" }}>
-                        {selectedChat.response?.[level] || "No content"}
-                      </Card.Body>
-                    </Card>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-
-          {!isLoading && chatHistory.length === 0 && (
-            <div className="text-center text-muted pt-5">
-              Start by entering a topic to generate educational content.
-            </div>
-          )}
+          <div ref={messagesEndRef} />
         </div>
 
         {/* Chat Input */}
-        <Form onSubmit={handleSubmit} className="d-flex p-3 border-top bg-light">
+        <Form
+          onSubmit={handleSubmit}
+          className="d-flex p-3 border-top bg-white"
+        >
           <Form.Control
             as="textarea"
             rows={1}
-            placeholder="Type a topic like 'Artificial Intelligence'..."
+            placeholder="Ask something like 'What is photosynthesis?'"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSubmit(e);
+              }
+            }}
             disabled={isLoading}
           />
-          <Button type="submit" className="ms-2" disabled={isLoading}>
+          <Button
+            type="submit"
+            className="ms-2"
+            disabled={isLoading || selectedDate !== todayDate}
+          >
             {isLoading ? "..." : "Send"}
           </Button>
         </Form>

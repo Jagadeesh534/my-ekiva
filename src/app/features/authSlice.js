@@ -32,7 +32,7 @@ const authSlice = createSlice({
           { name: "Dashboard", path: "/dashboard" },
           { name : "Smart-Class", path: "/dashboard/smart-class" },
           { name : "Assignments", path: "/dashboard/assignments" },
-          { name: 'Ekiva AI', path: '/dashboard/ekiva-ai' },
+          { name: 'Askiva', path: '/dashboard/ekiva-ai' },
       ];
       }
     },
