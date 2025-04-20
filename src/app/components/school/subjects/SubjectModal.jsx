@@ -26,7 +26,7 @@ const SubjectFormModal = ({ show, onHide, onSave, subject }) => {
           label: c.name,
         }));
         setClassData(options);
-       debugger
+       
           if (subject) {
             try {
               setLoading(true);

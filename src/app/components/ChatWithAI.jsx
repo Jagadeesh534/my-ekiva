@@ -84,9 +84,9 @@ function ChatWithAI() {
         topic: cleanPrompt,
       });
 
-      debugger;
+      ;
       const newContent = res.data.data[0].content[0];
-      debugger;
+      ;
       console.log("New content:", newContent);
 
       // Append to selectedMessages.content
