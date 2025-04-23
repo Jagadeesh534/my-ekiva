@@ -41,7 +41,7 @@ const dummyClasses = [
 ];
 
 const LibraryAdmin = () => {
-  const [classes, setClasses] = useState([]);
+  const [classes, setClasses] = useState(dummyClasses);
   const [expandedId, setExpandedId] = useState(null);
   const [modalInfo, setModalInfo] = useState({ show: false, classId: null });
   const [form, setForm] = useState({ title: "", file: null });
@@ -72,19 +72,6 @@ const LibraryAdmin = () => {
     setModalInfo({ show: false, classId: null });
     setForm({ title: "", file: null });
   };
-
-  useEffect(() => {
-    const fetchClassData = async () => {
-      try {
-        const response = await axiosInstance.get(`${config.API_BASE}classrooms/`);
-        setClasses(response.data);
-      } catch (error) {
-        console.error("Error fetching class data:", error);
-      }
-    };
-
-    fetchClassData();
-  }, []);
 
   return (
     <div className="container py-4">
