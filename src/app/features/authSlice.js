@@ -33,7 +33,12 @@ const authSlice = createSlice({
           { name : "Smart-Class", path: "/dashboard/smart-class" },
           { name : "Assignments", path: "/dashboard/assignments" },
           { name: 'Askiva', path: '/dashboard/ekiva-ai' },
+          { name: 'Library', path: '/dashboard/library' },
       ];
+      } else {
+        state.menus = [
+          { name: 'Library', path: '/dashboard/library' }
+        ]
       }
     },
 

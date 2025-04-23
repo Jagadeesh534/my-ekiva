@@ -24,6 +24,8 @@ import TeacherAssignmentPage from "./app/components/teachers/TeacherAssignmentPa
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ChatWithAI from "./app/components/ChatWithAI";
+import LibraryAdmin from "./app/components/library/LibraryAdmin";
+import LibraryUser from "./app/components/library/LibraryUser";
 
 function App() {
   const loginType = useSelector((state) => state.auth.loginType);
@@ -104,6 +106,10 @@ function App() {
           <Route path="ekiva-ai" element={<ChatWithAI title="ekiva-ai"/>}>
 
           </Route>
+          <Route
+            path="library"
+            element={loginType === "schooladmin" ? <LibraryAdmin title="Library" /> : <LibraryUser title="Library" />}
+          />
         </Route>
 
 
