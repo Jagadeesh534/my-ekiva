@@ -71,7 +71,7 @@ function Login() {
       <header className="wave-header">
         <div className="header-content">
           <img src={ekivaLogo} alt="logo" width={100} />
-          <h1 className="title">My Ekiva</h1>
+          <h1 className="title">My Ekiva 2</h1>
           <p className="subtitle">Teachers, AI, a New Journey</p>
         </div>
         <div className="wave">
